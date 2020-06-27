@@ -25,4 +25,4 @@ out/
 *.iml
 */bin
 **/bin
-users/
+classes/
