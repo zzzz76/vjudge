@@ -222,11 +222,12 @@ public class ProblemAction extends BaseAction{
         if (user == null){
             return ERROR;
         }
-        problem = (Problem) baseService.query(Problem.class, id);
+        problem = (Problem) baseService.query(Problem.class, id);// 从数据库中获取problem bean
         //        ServletContext sc = ServletActionContext.getServletContext();
         //        languageList = (Map<Object, String>) sc.getAttribute(problem.getOriginOJ());
-        languageList = languageManager.getLanguages(problem.getOriginOJ(),problem.getOriginProb());
+        languageList = languageManager.getLanguages(problem.getOriginOJ(),problem.getOriginProb());// 从三方实例中获取语言列表
 
+        // 若提交不规范则重新提交 --> 转发submit.jsp
         if (problem == null){
             this.addActionError("Please submit via normal approach!");
             return INPUT;
@@ -249,7 +250,7 @@ public class ProblemAction extends BaseAction{
             this.addActionError("Source code should be shorter than 30000 bytes in UTF-8!");
             return INPUT;
         }
-        submission = new Submission();
+        submission = new Submission(); // 创建submission
         submission.setSubTime(new Date());
         submission.setProblem(problem);
         submission.setUser(user);
@@ -263,13 +264,13 @@ public class ProblemAction extends BaseAction{
         submission.setOriginOJ(problem.getOriginOJ());
         submission.setOriginProb(problem.getOriginProb());
         submission.setLanguageCanonical(Tools.getCanonicalLanguage(submission.getDispLanguage()).toString());
-        baseService.addOrModify(submission);
+        baseService.addOrModify(submission);// 数据库添加submission bean
         if (user.getShare() != submission.getIsOpen()) {
             user.setShare(submission.getIsOpen());
             baseService.addOrModify(user);
         }
 
-        submitManager.submitCode(submission);
+        submitManager.submitCode(submission);// 进行判题 --> 重定向status.action
 
         return SUCCESS;
     }

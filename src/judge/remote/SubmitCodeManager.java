@@ -37,9 +37,9 @@ public class SubmitCodeManager {
             return;
         }
         if (!runningSubmissions.contains(submission.getId())) {
-            log.info("Create submit: " + runningSubmissions.getLogKey(submission));
-            runningSubmissions.add(submission);
-            new SubmitCodeTask(submission).submit();
+            log.info("Create submit: " + runningSubmissions.getLogKey(submission));// 打印submission的信息
+            runningSubmissions.add(submission);// 缓存submission和最近时间
+            new SubmitCodeTask(submission).submit();// 异步线程
         }
     }
 
@@ -63,9 +63,9 @@ public class SubmitCodeManager {
         }
 
         private void submitCode() throws Exception {
-            final SubmissionInfo info = SubmissionConverter.toInfo(submission);
-            Submitter submitter = SubmittersHolder.getSubmitter(info.remoteOj);
-            submitter.submitCode(info, new Handler<SubmissionReceipt>() {
+            final SubmissionInfo info = SubmissionConverter.toInfo(submission);// 格式转换
+            Submitter submitter = SubmittersHolder.getSubmitter(info.remoteOj);// 获取三方实例
+            submitter.submitCode(info, new Handler<SubmissionReceipt>() {// 异步线程
                 @Override
                 public void handle(SubmissionReceipt receipt) {
                     try {

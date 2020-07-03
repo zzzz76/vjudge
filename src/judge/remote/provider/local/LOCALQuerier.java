@@ -30,7 +30,7 @@ public class LOCALQuerier extends AuthenticatedQuerier {
     	 String html = client.get(
     			 LOCALInfo.getPath()+"/status-ajax.php?solution_id=" + info.remoteRunId,
                  new HttpBodyValidator("<title>Error</title>", true)).getBody();
-    	 System.out.println(html);
+//    	 System.out.println(html);
          String[] s=html.split(",");
          
          SubmissionRemoteStatus status = new SubmissionRemoteStatus();
@@ -38,8 +38,8 @@ public class LOCALQuerier extends AuthenticatedQuerier {
          status.rawStatus =result[Integer.parseInt(s[0])];
          status.statusType = SubstringNormalizer.DEFAULT.getStatusType(status.rawStatus);
          if (status.statusType == RemoteStatusType.AC) {
-             status.executionMemory = Integer.parseInt(s[1]);
-             status.executionTime = Integer.parseInt(s[2].trim());
+             status.executionMemory = Integer.parseInt(s[1].split(" ")[0]);
+             status.executionTime = Integer.parseInt(s[2].split(" ")[0]);
          } else if (status.statusType == RemoteStatusType.CE) {
              
              Validate.isTrue(result[Integer.parseInt(s[0])].contains("Compile Error"));

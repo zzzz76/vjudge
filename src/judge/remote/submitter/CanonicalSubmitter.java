@@ -119,18 +119,19 @@ public abstract class CanonicalSubmitter implements Submitter {
             }
 
             if (needLogin()) {
-                LoginersHolder.getLoginer(getOjInfo().remoteOj).login(remoteAccount);
+                LoginersHolder.getLoginer(getOjInfo().remoteOj).login(remoteAccount);// 完成远程登入，若之前登入过则不会重复登入
             }
             DedicatedHttpClient client = dedicatedHttpClientFactory.build(getHost(), remoteAccount.getContext(),
                     getCharset());
 
-            Integer runIdBefore = getMaxRunId(info, client, false);
+            Integer runIdBefore = getMaxRunId(info, client, false);// 完成末尾runID的获取
 
-            String errorStatus = submitCode(info, remoteAccount, client);
+            String errorStatus = submitCode(info, remoteAccount, client);// 完成远程提交
             if (errorStatus != null) {
                 return new SubmissionReceipt(null, null, errorStatus);
             }
 
+            // 完成最新runID的获取
             Integer runIdAfter;
             long beginTime = System.currentTimeMillis();
             while (true) {
