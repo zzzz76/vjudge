@@ -81,6 +81,7 @@ public class ProblemAction extends BaseAction{
             this.addActionError((String) session.get("error"));
         }
         session.remove("error");
+        log.info("......toListProblem response...... dispatcher:{}", GsonUtil.toJson(getRequest()));
         return SUCCESS;// 转发list.jsp --> post /listProblem.action
     }
     // 题目分页 post /listProblem.action
@@ -173,11 +174,14 @@ public class ProblemAction extends BaseAction{
     }
     // 添加题目 get /recrawlProblem.action
     public String recrawlProblem() {
+        log.info("......recrawlProblem request...... get:{}", GsonUtil.toJson(getRequest()));
         problemInfoUpdateManager.updateProblem(OJId, probNum, true);
+        log.info("......recrawlProblem response...... redirect:{}", GsonUtil.toJson(getRequest()));
         return SUCCESS;// 重定向 /viewProblem.action?OJId=${OJId}&probNum=${probNum}
     }
     // 显示题目 get /viewProblem.action
     public String viewProblem(){
+        log.info("......viewProblem request...... get:{}", GsonUtil.toJson(getRequest()));
         if (!StringUtils.isBlank(OJId) && !StringUtils.isBlank(probNum)) {
             problem = judgeService.findProblem(OJId, probNum);
         } else {
@@ -187,10 +191,12 @@ public class ProblemAction extends BaseAction{
         }
         _64Format = lf.get(problem.getOriginOJ());
         problemInfoUpdateManager.updateProblem(problem, false); // 开启了异步线程
+        log.info("......viewProblem response...... dispatcher:{}", GsonUtil.toJson(getRequest()));
         return SUCCESS;// 转发view.jsp --> 异步快则主线程直接输出，异步过慢则需要刷新
     }
     // 为描述投票 post /vote4Description.action
     public String vote4Description(){
+        log.info("......vote4Description request...... post:{}", GsonUtil.toJson(getRequest()));
         Map session = ActionContext.getContext().getSession();
         Set votePids = (Set) session.get("votePids");
         if (votePids == null){
@@ -201,6 +207,7 @@ public class ProblemAction extends BaseAction{
         desc.setVote(desc.getVote() + 1);
         baseService.addOrModify(desc);
         votePids.add(desc.getProblem().getId());
+        log.info("......vote4Description response...... lost");
         return SUCCESS;// 无
     }
     // 进入非比赛提交页面 get /toSubmit.action
