@@ -1,26 +1,17 @@
 package judge.action;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.ServletContext;
-import javax.tools.Tool;
 
-import judge.bean.Cproblem;
-import judge.bean.DataTablesPage;
-import judge.bean.Description;
-import judge.bean.Problem;
-import judge.bean.Submission;
-import judge.bean.User;
+import com.google.gson.Gson;
+import judge.bean.*;
 import judge.remote.ProblemInfoUpdateManager;
 import judge.remote.RunningSubmissions;
 import judge.remote.SubmitCodeManager;
 import judge.remote.language.LanguageManager;
 import judge.remote.status.RemoteStatusType;
+import judge.tool.GsonUtil;
 import judge.tool.OnlineTool;
 import judge.tool.Tools;
 
@@ -36,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.ActionContext;
+
 
 /**
  * 处理 题库/练习 前端相关功能
@@ -67,6 +59,7 @@ public class ProblemAction extends BaseAction{
     private DataTablesPage dataTablesPage;
     private Map<String, String> languageList;
     private String submissionInfo;
+    private Response response;
 
     @Autowired
     private ProblemInfoUpdateManager problemInfoUpdateManager;
@@ -80,21 +73,32 @@ public class ProblemAction extends BaseAction{
     @Autowired
     private LanguageManager languageManager;
 
+    // 罗列题目 get /toListProblem.action
     public String toListProblem() {
+        log.info("......toListProblem request...... get:{}", GsonUtil.toJson(getRequest()));
         Map session = ActionContext.getContext().getSession();
         if (session.containsKey("error")){
             this.addActionError((String) session.get("error"));
         }
         session.remove("error");
-        return SUCCESS;
+        return SUCCESS;// 转发list.jsp --> post /listProblem.action
     }
-
+    // 题目分页 post /listProblem.action
     public String listProblem() {
         String sortDir = getParameter("order[0][dir]");
         String sortCol = getParameter("order[0][column]");
         String start = getParameter("start");
         String length = getParameter("length");
         String draw = getParameter("draw");
+
+        Map<String, String> params = new HashMap<>();
+        params.put("sortDir", sortDir);
+        params.put("sortCol", sortCol);
+        params.put("start", start);
+        params.put("length", length);
+        params.put("draw", draw);
+        Request request = getRequest().setParaMap(params);
+        log.info("......listProblem request...... post:{}", GsonUtil.toJson(request));
 
         // (Re)crawl the problem if necessary
         if (OJListLiteral.contains(OJId) && !StringUtils.isBlank(probNum)) {
@@ -119,6 +123,7 @@ public class ProblemAction extends BaseAction{
         long cnt = baseService.count(hql.toString());
         dataTablesPage = new DataTablesPage();
         dataTablesPage.setRecordsTotal(cnt);
+        // 关键字筛选
         if (OJListLiteral.contains(OJId)){
             hql.append(" and problem.originOJ = '" + OJId + "' ");
         }
@@ -136,6 +141,7 @@ public class ProblemAction extends BaseAction{
             hql.append(" and problem.source like :source ");
         }
         dataTablesPage.setRecordsFiltered(baseService.count(hql.toString(), paraMap));
+        // 关键字排序
         if (sortCol != null){
             if (!"desc".equals(sortDir)) {
                 sortDir = "";
@@ -161,27 +167,29 @@ public class ProblemAction extends BaseAction{
             this.addActionError((String) session.get("error"));
         }
         session.remove("error");
+        log.info("......listProblem response...... dataTablesPage:{}", GsonUtil.toJson(dataTablesPage));
 
-        return SUCCESS;
+        return SUCCESS;// 返回(json)dataTablesPage数据
     }
-
+    // 添加题目 get /recrawlProblem.action
     public String recrawlProblem() {
         problemInfoUpdateManager.updateProblem(OJId, probNum, true);
-        return SUCCESS;
+        return SUCCESS;// 重定向 /viewProblem.action?OJId=${OJId}&probNum=${probNum}
     }
-
+    // 显示题目 get /viewProblem.action
     public String viewProblem(){
         if (!StringUtils.isBlank(OJId) && !StringUtils.isBlank(probNum)) {
             problem = judgeService.findProblem(OJId, probNum);
         } else {
+            // 根据唯一标识从数据库获取题目
             List<Problem> list = baseService.query("select p from Problem p left join fetch p.descriptions where p.id = " + id);
             problem = list.get(0);
         }
         _64Format = lf.get(problem.getOriginOJ());
-        problemInfoUpdateManager.updateProblem(problem, false);
-        return SUCCESS;
+        problemInfoUpdateManager.updateProblem(problem, false); // 开启了异步线程
+        return SUCCESS;// 转发view.jsp --> 异步快则主线程直接输出，异步过慢则需要刷新
     }
-
+    // 为描述投票 post /vote4Description.action
     public String vote4Description(){
         Map session = ActionContext.getContext().getSession();
         Set votePids = (Set) session.get("votePids");
@@ -193,15 +201,15 @@ public class ProblemAction extends BaseAction{
         desc.setVote(desc.getVote() + 1);
         baseService.addOrModify(desc);
         votePids.add(desc.getProblem().getId());
-        return SUCCESS;
+        return SUCCESS;// 无
     }
-
+    // 进入非比赛提交页面 get /toSubmit.action
     public String toSubmit(){
         Map session = ActionContext.getContext().getSession();
         User user = (User) session.get("visitor");
         if (user == null){
             //            session.put("redir", "../problem/toSubmit.action?id=" + id);
-            return ERROR;
+            return ERROR;// 重定向 /toIndex.action
         }
         ServletContext sc = ServletActionContext.getServletContext();
         problem = (Problem) baseService.query(Problem.class, id);
@@ -212,25 +220,24 @@ public class ProblemAction extends BaseAction{
         languageList = languageManager.getLanguages(problem.getOriginOJ(),problem.getOriginProb());
         //        languageList = (Map<Object, String>) sc.getAttribute(problem.getOriginOJ());
         isOpen = user.getShare();
-        return SUCCESS;
+        return SUCCESS;// 转发submit.jsp
     }
-
-
+    // 非比赛中的提交 post /submit.action
     public String submit() throws Exception{
         Map session = ActionContext.getContext().getSession();
         User user = (User) session.get("visitor");
         if (user == null){
-            return ERROR;
+            return ERROR;// 重定向 /toIndex.action
         }
         problem = (Problem) baseService.query(Problem.class, id);// 从数据库中获取problem bean
         //        ServletContext sc = ServletActionContext.getServletContext();
         //        languageList = (Map<Object, String>) sc.getAttribute(problem.getOriginOJ());
         languageList = languageManager.getLanguages(problem.getOriginOJ(),problem.getOriginProb());// 从三方实例中获取语言列表
 
-        // 若提交不规范则重新提交 --> 转发submit.jsp
+        // 若提交不规范则重新提交
         if (problem == null){
             this.addActionError("Please submit via normal approach!");
-            return INPUT;
+            return INPUT;// 转发submit.jsp
         }
         if (problem.getTimeLimit() == 1 || problem.getTimeLimit() == 2){
             this.addActionError("Crawling has not finished!");
@@ -270,11 +277,11 @@ public class ProblemAction extends BaseAction{
             baseService.addOrModify(user);
         }
 
-        submitManager.submitCode(submission);// 进行判题 --> 重定向status.action
+        submitManager.submitCode(submission);// 进行判题
 
-        return SUCCESS;
+        return SUCCESS;// 重定向 /status.action
     }
-
+    // 显示提交 get /status.action
     public String status() {
         if (id != 0){
             problem = (Problem) baseService.query(Problem.class, id);
@@ -290,9 +297,9 @@ public class ProblemAction extends BaseAction{
         }
         session.remove("error");
 
-        return SUCCESS;
+        return SUCCESS;// 转发status.jsp
     }
-
+    // 提交分页 post /fetchStatus.action
     public String fetchStatus() {
         String start = getParameter("start");
         String length = getParameter("length");
@@ -432,27 +439,27 @@ public class ProblemAction extends BaseAction{
         dataTablesPage.setData(aaData);
         dataTablesPage.setDraw(Integer.parseInt(draw));
 
-        return SUCCESS;
+        return SUCCESS;// 返回(json)dataTablesPage数据
     }
-
+    // 进入修改题面页面 get /toEditDescription.action
     public String toEditDescription(){
         Map session = ActionContext.getContext().getSession();
         List list = baseService.query("select d from Description d left join fetch d.problem where d.id = " + id);
         description = (Description) list.get(0);
         problem = description.getProblem();
         if (session.get("visitor") == null){
-            return "login";
+            return "login";// 重定向 /toIndex.action
         }
         redir = ServletActionContext.getRequest().getHeader("Referer") + "&edit=1";
-        return SUCCESS;
+        return SUCCESS;// 转发edit_description.jsp
     }
-
+    // 修改题面 post /editDescription.action
     public String editDescription(){
         Map session = ActionContext.getContext().getSession();
         User user = (User) session.get("visitor");
         if (user == null){
             session.put("error", "Please login first!");
-            return ERROR;
+            return ERROR;// 无
         }
         if (id == 0){
             return ERROR;
@@ -470,13 +477,13 @@ public class ProblemAction extends BaseAction{
         description.setProblem(new Problem(id));
         baseService.execute("delete from Description d where d.author = '" + user.getUsername() + "' and d.problem.id = " + id);
         baseService.addOrModify(description);
-        return SUCCESS;
+        return SUCCESS;// 重定向 /${redir}
     }
-
+    // 删除题面 post /deleteDescription.action
     public String deleteDescription(){
         User user = OnlineTool.getCurrentUser();
         if (user == null) {
-            return ERROR;
+            return ERROR;// 无
         }
         Session session = baseService.getSession();
         Transaction tx = session.beginTransaction();
@@ -507,16 +514,16 @@ public class ProblemAction extends BaseAction{
         } finally {
             baseService.releaseSession(session);
         }
-        return SUCCESS;
+        return SUCCESS;// 无
     }
-
+    // 查看代码 get /viewSource.action
     public String viewSource(){
         Map session = ActionContext.getContext().getSession();
         User user = (User) session.get("visitor");
         List list = baseService.query("select s from Submission s left join fetch s.contest left join fetch s.problem left join fetch s.user where s.id = " + id);
         if (list.isEmpty()){
             session.put("error", "No such submission!");
-            return ERROR;
+            return ERROR;// 重定向 /status.action
         }
         submission = (Submission) list.get(0);
         if (!(user != null && (user.getSup() != 0 || user.getId() == submission.getUser().getId()) || submission.getIsOpen() == 1 && (submission.getContest() == null || new Date().compareTo(submission.getContest().getEndTime()) > 0))){
@@ -534,11 +541,9 @@ public class ProblemAction extends BaseAction{
         //这里language用作为shjs提供语言识别所需要的class名
         language = Tools.findClass4SHJS(submission.getLanguage());
 
-        return SUCCESS;
+        return SUCCESS;// 转发source.jsp
     }
-
-
-
+    // 重判代码 post /rejudge.action
     public String rejudge(){
         Map session = ActionContext.getContext().getSession();
         User user = (User) session.get("visitor");
@@ -547,32 +552,38 @@ public class ProblemAction extends BaseAction{
             submission = submissionList.get(0);
         }
         if (submission == null){
-            return ERROR;
+            return ERROR;// 无
         } else {
             judgeService.rejudge(submission, false);
-            return SUCCESS;
+            return SUCCESS;// 返回状态200
         }
     }
-
+    // 切花代码公开性 post /toggleOpen.action
     public String toggleOpen() {
         judgeService.toggleOpen(id);
-        return SUCCESS;
+        return SUCCESS;// 无
     }
-
+    // 获取提交信息 get /fetchSubmissionInfo.action
     public String fetchSubmissionInfo() {
         submission = (Submission) baseService.query(Submission.class, id);
         submissionInfo = submission.getAdditionalInfo();
-        return SUCCESS;
+        return SUCCESS;// 返回(json)submissionInfo数据
     }
-
+    // 访问原始链接 get /visitOriginUrl.action
     public String visitOriginUrl() {
         List<String> _url = baseService.query("select p.url from Problem p where p.id = " + id);
         if (_url.isEmpty()) {
             return ERROR;
         } else {
             redir = _url.get(0);
-            return SUCCESS;
+            return SUCCESS;// 重定向 /${redir}
         }
+    }
+
+    public String testResponse() {
+        response = new Response();
+        response.setName("ZWH").setId(1).setAge(24);
+        return SUCCESS;
     }
 
     public int getUid() {
@@ -707,5 +718,26 @@ public class ProblemAction extends BaseAction{
     }
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Response getResponse() {
+        return response;
+    }
+
+    public ProblemAction setResponse(Response response) {
+        this.response = response;
+        return this;
+    }
+
+    private Request getRequest() {
+        Request request = new Request();
+        request.setId(id).setUid(uid).setIsOpen(isOpen).setRes(res)
+                .setOJId(OJId).setProbNum(probNum).setTitle(title)
+                .setProblem(problem).setDescription(description).setSubmission(submission)
+                .setDataList(dataList).setLanguage(language).setSource(source)
+                .setRedir(redir).setUn(un).set_64Format(_64Format)
+                .setIsSup(isSup).setDataTablesPage(dataTablesPage).setLanguageList(languageList)
+                .setSubmissionInfo(submissionInfo);
+        return request;
     }
 }
