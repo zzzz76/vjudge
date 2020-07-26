@@ -87,10 +87,10 @@ public class ProblemAction extends BaseAction{
     // 题目分页 post /listProblem.action
     public String listProblem() {
         String sortDir = getParameter("order[0][dir]");
-        String sortCol = getParameter("order[0][column]");
-        String start = getParameter("start");
-        String length = getParameter("length");
-        String draw = getParameter("draw");
+        String sortCol = getParameter("order[0][column]");// 按第一列排序
+        String start = getParameter("start");// 起始位子，如第一页就从
+        String length = getParameter("length");// 预读长度= 预读页数*每页行数
+        String draw = getParameter("draw");// 浏览器cache的编号，递增不可重复
 
         Map<String, String> params = new HashMap<>();
         params.put("sortDir", sortDir);
@@ -196,7 +196,7 @@ public class ProblemAction extends BaseAction{
     }
     // 为描述投票 post /vote4Description.action
     public String vote4Description(){
-        log.info("......vote4Description request...... post:{}", GsonUtil.toJson(getRequest()));
+//        log.info("......vote4Description request...... post:{}", GsonUtil.toJson(getRequest()));
         Map session = ActionContext.getContext().getSession();
         Set votePids = (Set) session.get("votePids");
         if (votePids == null){
@@ -207,11 +207,12 @@ public class ProblemAction extends BaseAction{
         desc.setVote(desc.getVote() + 1);
         baseService.addOrModify(desc);
         votePids.add(desc.getProblem().getId());
-        log.info("......vote4Description response...... lost");
+//        log.info("......vote4Description response...... lost");
         return SUCCESS;// 无
     }
     // 进入非比赛提交页面 get /toSubmit.action
     public String toSubmit(){
+        log.info("......toSubmit request...... get:{}", GsonUtil.toJson(getRequest()));
         Map session = ActionContext.getContext().getSession();
         User user = (User) session.get("visitor");
         if (user == null){
@@ -227,10 +228,12 @@ public class ProblemAction extends BaseAction{
         languageList = languageManager.getLanguages(problem.getOriginOJ(),problem.getOriginProb());
         //        languageList = (Map<Object, String>) sc.getAttribute(problem.getOriginOJ());
         isOpen = user.getShare();
+        log.info("......toSubmit response...... dispatcher:{}", GsonUtil.toJson(getRequest()));
         return SUCCESS;// 转发submit.jsp
     }
     // 非比赛中的提交 post /submit.action
     public String submit() throws Exception{
+        log.info("......submit request...... post:{}", GsonUtil.toJson(getRequest()));
         Map session = ActionContext.getContext().getSession();
         User user = (User) session.get("visitor");
         if (user == null){
@@ -279,13 +282,14 @@ public class ProblemAction extends BaseAction{
         submission.setOriginProb(problem.getOriginProb());
         submission.setLanguageCanonical(Tools.getCanonicalLanguage(submission.getDispLanguage()).toString());
         baseService.addOrModify(submission);// 数据库添加submission bean
+        System.out.println(submission.getStatus());
         if (user.getShare() != submission.getIsOpen()) {
             user.setShare(submission.getIsOpen());
             baseService.addOrModify(user);
         }
 
         submitManager.submitCode(submission);// 进行判题
-
+//        log.info("......submit response...... redirect:{}", GsonUtil.toJson(getRequest()));
         return SUCCESS;// 重定向 /status.action
     }
     // 显示提交 get /status.action
@@ -589,7 +593,7 @@ public class ProblemAction extends BaseAction{
 
     public String testResponse() {
         response = new Response();
-        response.setName("ZWH").setId(1).setAge(24);
+        response.setName("ZZZ").setId(1).setAge(24);
         return SUCCESS;
     }
 
@@ -738,8 +742,12 @@ public class ProblemAction extends BaseAction{
 
     private Request getRequest() {
         Request request = new Request();
-        request.setId(id).setUid(uid).setIsOpen(isOpen).setRes(res)
-                .setOJId(OJId).setProbNum(probNum).setTitle(title)
+        if (id != 0) request.setId(id);
+        if (uid != 0) request.setUid(uid);
+        if (isOpen != 0) request.setIsOpen(isOpen);
+        if (res != 0) request.setRes(res);
+
+        request.setOJId(OJId).setProbNum(probNum).setTitle(title)
                 .setProblem(problem).setDescription(description).setSubmission(submission)
                 .setDataList(dataList).setLanguage(language).setSource(source)
                 .setRedir(redir).setUn(un).set_64Format(_64Format)

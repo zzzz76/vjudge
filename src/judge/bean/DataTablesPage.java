@@ -8,9 +8,9 @@ import org.apache.struts2.json.annotations.JSON;
 public class DataTablesPage {
 
     private List data;
-    private Long recordsTotal;
-    private Long recordsFiltered;
-    private Integer draw;
+    private Long recordsTotal;// 原始数据总数
+    private Long recordsFiltered;// 过滤后的数据总数
+    private Integer draw;// 浏览器cache的编号，递增不可重复
 
     
     @JSON(name = "recordsTotal")

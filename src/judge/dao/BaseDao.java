@@ -16,6 +16,7 @@ public class BaseDao extends HibernateDaoSupport implements IBaseDao {
     private final static Logger log = LoggerFactory.getLogger(BaseDao.class);
 
     public void addOrModify(Object entity) {
+        System.out.println("数据库被改变");
         Session session = super.getSession();
         Transaction tx = session.beginTransaction();
         try {

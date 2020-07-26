@@ -46,6 +46,7 @@ public class QueryStatusManager {
     private RemoteStatusUpdateEvent updateEvent;
 
     public void createQuery(final Submission submission) {
+        // 任务不存在时、任务繁忙时均不执行
         if (submission.getId() == 0) {
             log.error(String.format("Please persist first: %s", runningSubmissions.getLogKey(submission)));
             return;
@@ -145,6 +146,7 @@ public class QueryStatusManager {
             log.info(String.format("Stop query: %s", runningSubmissions.getLogKey(submission)));
             if (runningSubmissions.remove(submission.getId()) != null) {
                 baseService.addOrModify(submission);
+                System.out.println(submission.getStatus());
             }
             updateEvent.fireStatusUpdate(submission);
         }

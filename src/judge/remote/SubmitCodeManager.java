@@ -100,6 +100,7 @@ public class SubmitCodeManager {
                         log.info("Submit Finished: " + runningSubmissions.getLogKey(submission));
                     }
                     baseService.addOrModify(submission);
+                    System.out.println(submission.getStatus());
                     runningSubmissions.remove(submission.getId());
 
                     if (receipt.remoteRunId != null) {

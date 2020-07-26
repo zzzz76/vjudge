@@ -9,14 +9,14 @@ import java.util.Map;
  * Date: 2020-07-15
  */
 public class Request {
-    private int id;    //problemId
-    private int uid;
-    private int isOpen;
-    private int res;    //result
+    private Integer id;    //problemId
+    private Integer uid;
+    private Integer isOpen;
+    private Integer res;    //result
     private String OJId;
     private String probNum;
     private String title;
-    private Problem problem;
+    private String problem;
     private Description description;
     private Submission submission;
     private List dataList;
@@ -31,38 +31,38 @@ public class Request {
     private String submissionInfo;
     private Map<String, String> paraMap;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public Request setId(int id) {
+    public Request setId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public int getUid() {
+    public Integer getUid() {
         return uid;
     }
 
-    public Request setUid(int uid) {
+    public Request setUid(Integer uid) {
         this.uid = uid;
         return this;
     }
 
-    public int getIsOpen() {
+    public Integer getIsOpen() {
         return isOpen;
     }
 
-    public Request setIsOpen(int isOpen) {
+    public Request setIsOpen(Integer isOpen) {
         this.isOpen = isOpen;
         return this;
     }
 
-    public int getRes() {
+    public Integer getRes() {
         return res;
     }
 
-    public Request setRes(int res) {
+    public Request setRes(Integer res) {
         this.res = res;
         return this;
     }
@@ -94,12 +94,14 @@ public class Request {
         return this;
     }
 
-    public Problem getProblem() {
+    public String getProblem() {
         return problem;
     }
 
     public Request setProblem(Problem problem) {
-        this.problem = problem;
+        if (problem != null) {
+            this.problem = problem.getTitle();
+        }
         return this;
     }
 
