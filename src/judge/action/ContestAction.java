@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 import judge.bean.Contest;
 import judge.bean.Cproblem;
-import judge.bean.DataTablesPage;
+import judge.action.response.DataTablesPage;
 import judge.bean.Description;
 import judge.bean.Problem;
 import judge.bean.ReplayStatus;

@@ -4,7 +4,8 @@ import java.util.*;
 
 import javax.servlet.ServletContext;
 
-import com.google.gson.Gson;
+import judge.action.request.Request;
+import judge.action.response.*;
 import judge.bean.*;
 import judge.remote.ProblemInfoUpdateManager;
 import judge.remote.RunningSubmissions;
@@ -190,10 +191,130 @@ public class ProblemAction extends BaseAction{
             problem = list.get(0);
         }
         _64Format = lf.get(problem.getOriginOJ());
-        problemInfoUpdateManager.updateProblem(problem, false); // 开启了异步线程
+        problemInfoUpdateManager.updateProblem(problem, false); // 更新判定 -> 开启了异步线程
         log.info("......viewProblem response...... dispatcher:{}", GsonUtil.toJson(getRequest()));
-        return SUCCESS;// 转发view.jsp --> 异步快则主线程直接输出，异步过慢则需要刷新
+        return SUCCESS;// 转发view.jsp --> 异步快则主线程直接输出，异步过慢则自动刷新
     }
+
+    /**
+     * 抓取题目api
+     * 输入 id  即可发起一个查询线程（自带session_id）
+     */
+    public String crawlProblem() {
+        log.info("......crawlProblem request...... get:{}", GsonUtil.toJson(getRequest()));
+        if (!StringUtils.isBlank(OJId) && !StringUtils.isBlank(probNum)) {
+            problem = judgeService.findProblem(OJId, probNum);
+        } else {
+            List<Problem> list = baseService.query("select p from Problem p left join fetch p.descriptions where p.id = " + id);
+            problem = list.get(0);
+        }
+
+        if (problem == null) {
+            response.setMessage("抓取对象不存在");
+            return SUCCESS;
+        }
+        problemInfoUpdateManager.updateProblem(problem, false); // 若判定需更新，则开启异步线程
+
+        CrawlResult result = ProblemConverter.toResult(problem);
+        result.setLanguageList(languageManager.getLanguages(problem.getOriginOJ(),problem.getOriginProb()));
+        response.setBaseResult(result);
+
+        if (result.getTimeLimit() == 1) {
+            // 非最终态
+            response.setMessage("抓取对象正在更新...");
+        } else if (result.getTimeLimit() == 2) {
+            // 最终态 不可用
+            response.setMessage("抓取对象不完整");
+        } else {
+            // 最终态 可用
+            response.setMessage("抓取成功");
+        }
+        return SUCCESS;
+    }
+
+    /**
+     * 查询状态api
+     * 输入 id 即可发起一个查询线程 (自带session_id)
+     */
+    public String queryStatus() {
+        submission = (Submission) baseService.query(Submission.class, id);
+        if (submission == null) {
+            // 添加信息
+            response.setMessage("The query doesn't exist");
+            return SUCCESS;
+        }
+        QueryResult result = new QueryResult();
+        result.setStatus(submission.getStatusCanonical()).setTime(submission.getTime())
+                .setMemory(submission.getMemory()).setAdditionalInfo(submission.getAdditionalInfo());
+        response.setBaseResult(result);
+        response.setMessage("Success");
+        return SUCCESS;
+    }
+
+    /**
+     * 提交解答api
+     * 输入 id,language,source 即可发起一个提交线程（自带session_id）
+     */
+    public String submitSolution() throws Exception{
+        Map session = ActionContext.getContext().getSession();
+        User user = (User) session.get("visitor");
+        if (user == null){
+            response.setMessage("Please login first!");
+            return SUCCESS;
+        }
+        problem = (Problem) baseService.query(Problem.class, id);// 从数据库中获取problem bean
+        languageList = languageManager.getLanguages(problem.getOriginOJ(),problem.getOriginProb());// 从三方实例中获取语言列表
+
+        // 若提交不规范则重新提交
+        if (problem == null){
+            response.setMessage("Please submit via normal approach!");
+            return SUCCESS;
+        }
+        if (problem.getTimeLimit() == 1 || problem.getTimeLimit() == 2){
+            response.setMessage("Crawling has not finished!");
+            return SUCCESS;
+        }
+
+        if (!languageList.containsKey(language)){
+            response.setMessage("No such a language!");
+            return SUCCESS;
+        }
+        source = new String(Base64.decodeBase64(source), "utf-8");
+        if (source.length() < 50){
+            response.setMessage("Source code should be longer than 50 characters!");
+            return SUCCESS;
+        }
+        if (source.getBytes("utf-8").length > 30000){
+            response.setMessage("Source code should be shorter than 30000 bytes in UTF-8!");
+            return SUCCESS;
+        }
+        submission = new Submission(); // 创建submission
+        submission.setSubTime(new Date());
+        submission.setProblem(problem);
+        submission.setUser(user);
+        submission.setStatus("Pending");
+        submission.setStatusCanonical(RemoteStatusType.PENDING.name());
+        submission.setLanguage(language);
+        submission.setSource(source);
+        submission.setIsOpen(user.getShare());
+        submission.setDispLanguage(languageManager.getLanguages(problem.getOriginOJ(),problem.getOriginProb()).get(language));
+        submission.setUsername(user.getUsername());
+        submission.setOriginOJ(problem.getOriginOJ());
+        submission.setOriginProb(problem.getOriginProb());
+        submission.setLanguageCanonical(Tools.getCanonicalLanguage(submission.getDispLanguage()).toString());
+        baseService.addOrModify(submission);// 数据库添加submission bean
+        System.out.println(submission.getStatus());
+
+        submitManager.submitCode(submission);// 进行判题
+        response.setMessage("Submitting in process...");
+
+        // 提交结束后，前端应该要获取啥
+        SubmitResult result = new SubmitResult();
+        result.setTaskId(submission.getId());
+        response.setBaseResult(result);
+        return SUCCESS;
+    }
+
     // 为描述投票 post /vote4Description.action
     public String vote4Description(){
 //        log.info("......vote4Description request...... post:{}", GsonUtil.toJson(getRequest()));
@@ -591,12 +712,6 @@ public class ProblemAction extends BaseAction{
         }
     }
 
-    public String testResponse() {
-        response = new Response();
-        response.setName("ZZZ").setId(1).setAge(24);
-        return SUCCESS;
-    }
-
     public int getUid() {
         return uid;
     }
@@ -730,14 +845,11 @@ public class ProblemAction extends BaseAction{
     public void setTitle(String title) {
         this.title = title;
     }
-
     public Response getResponse() {
         return response;
     }
-
-    public ProblemAction setResponse(Response response) {
+    public void setResponse(Response response) {
         this.response = response;
-        return this;
     }
 
     private Request getRequest() {
@@ -755,4 +867,6 @@ public class ProblemAction extends BaseAction{
                 .setSubmissionInfo(submissionInfo);
         return request;
     }
+
+
 }

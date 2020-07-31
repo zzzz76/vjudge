@@ -35,6 +35,33 @@
             <result name="error" type="redirect">toListProblem.action</result>
         </action>
 
+        <!-- 抓取题目api -->
+        <action name="crawlProblem" class="problemAction" method="crawlProblem">
+            <result type="json">
+                <param name="root">response</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+            </result>
+        </action>
+
+        <!-- 查询状态api -->
+        <action name="queryStatus" class="problemAction" method="queryStatus">
+            <result type="json">
+                <param name="root">response</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+            </result>
+        </action>
+
+        <!-- 提交解答api -->
+        <action name="submitSolution" class="problemAction" method="submitSolution">
+            <result type="json">
+                <param name="root">response</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+            </result>
+        </action>
+
         <!-- 为描述投票 -->
         <action name="vote4Description" class="problemAction" method="vote4Description">
         </action>
@@ -66,6 +93,7 @@
             <result name="error" type="redirect">/toIndex.action</result>
             <result name="input">/problem/submit.jsp</result>
         </action>
+
 
         <!-- 进入修改题面页面 -->
         <action name="toEditDescription" class="problemAction" method="toEditDescription">

@@ -1,4 +1,9 @@
-package judge.bean;
+package judge.action.request;
+
+import judge.action.response.DataTablesPage;
+import judge.bean.Description;
+import judge.bean.Problem;
+import judge.bean.Submission;
 
 import java.util.List;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package judge.bean;
+package judge.action.response;
 
 
 import java.util.List;

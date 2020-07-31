@@ -6,7 +6,7 @@ public class SubmissionRemoteStatus {
     
     public RemoteStatusType statusType;
     
-    public String rawStatus;
+    public String rawStatus; // 原生状态
     
     /**
      * millisecond
