@@ -332,7 +332,6 @@ public class ProblemAction extends BaseAction{
 
     // 为描述投票 post /vote4Description.action
     public String vote4Description(){
-//        log.info("......vote4Description request...... post:{}", GsonUtil.toJson(getRequest()));
         Map session = ActionContext.getContext().getSession();
         Set votePids = (Set) session.get("votePids");
         if (votePids == null){
@@ -343,7 +342,6 @@ public class ProblemAction extends BaseAction{
         desc.setVote(desc.getVote() + 1);
         baseService.addOrModify(desc);
         votePids.add(desc.getProblem().getId());
-//        log.info("......vote4Description response...... lost");
         return SUCCESS;// 无
     }
     // 进入非比赛提交页面 get /toSubmit.action
@@ -425,11 +423,12 @@ public class ProblemAction extends BaseAction{
         }
 
         submitManager.submitCode(submission);// 进行判题
-//        log.info("......submit response...... redirect:{}", GsonUtil.toJson(getRequest()));
+        log.info("......submit response...... redirect");
         return SUCCESS;// 重定向 /status.action
     }
     // 显示提交 get /status.action
     public String status() {
+        log.info("......status request...... get:{}", GsonUtil.toJson(getRequest()));
         if (id != 0){
             problem = (Problem) baseService.query(Problem.class, id);
             OJId = problem.getOriginOJ();
@@ -444,6 +443,7 @@ public class ProblemAction extends BaseAction{
         }
         session.remove("error");
 
+        log.info("......status response...... dispatcher:{}", GsonUtil.toJson(getRequest()));
         return SUCCESS;// 转发status.jsp
     }
     // 提交分页 post /fetchStatus.action
@@ -452,6 +452,13 @@ public class ProblemAction extends BaseAction{
         String length = getParameter("length");
         String draw = getParameter("draw");
         String orderBy = getParameter("orderBy");
+
+        Map<String, String> params = new HashMap<>();
+        params.put("start", start);
+        params.put("length", length);
+        params.put("draw", draw);
+        params.put("orderBy", orderBy);
+        log.info("......fetchStatus request...... get:{}", GsonUtil.toJson(getRequest().setParaMap(params)));
 
         Map session = ActionContext.getContext().getSession();
         Map paraMap = new HashMap();
@@ -586,6 +593,7 @@ public class ProblemAction extends BaseAction{
         dataTablesPage.setData(aaData);
         dataTablesPage.setDraw(Integer.parseInt(draw));
 
+        log.info("......fetchStatus response...... dataTablesPage:{}", GsonUtil.toJson(dataTablesPage));
         return SUCCESS;// 返回(json)dataTablesPage数据
     }
     // 进入修改题面页面 get /toEditDescription.action
