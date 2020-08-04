@@ -10,6 +10,7 @@ import org.apache.struts2.json.annotations.JSON;
 public class Response {
     private BaseResult baseResult;
     private String message;
+    private int code;
 
     @JSON(name = "data")
     public BaseResult getBaseResult() {
@@ -27,5 +28,14 @@ public class Response {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    @JSON(name = "code")
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
     }
 }

@@ -192,7 +192,7 @@ public class ProblemAction extends BaseAction{
         }
         _64Format = lf.get(problem.getOriginOJ());
         problemInfoUpdateManager.updateProblem(problem, false); // 更新判定 -> 开启了异步线程
-        log.info("......viewProblem response...... dispatcher:{}", GsonUtil.toJson(getRequest()));
+        log.info("......viewProblem response...... dispatcher:{}", GsonUtil.toJson(getRequest().setTitle(problem.getTitle())));
         return SUCCESS;// 转发view.jsp --> 异步快则主线程直接输出，异步过慢则自动刷新
     }
 
@@ -201,7 +201,6 @@ public class ProblemAction extends BaseAction{
      * 输入 id  即可发起一个查询线程（自带session_id）
      */
     public String crawlProblem() {
-        log.info("......crawlProblem request...... get:{}", GsonUtil.toJson(getRequest()));
         if (!StringUtils.isBlank(OJId) && !StringUtils.isBlank(probNum)) {
             problem = judgeService.findProblem(OJId, probNum);
         } else {
@@ -209,8 +208,10 @@ public class ProblemAction extends BaseAction{
             problem = list.get(0);
         }
 
+        response = new Response();
         if (problem == null) {
             response.setMessage("抓取对象不存在");
+            response.setCode(200);
             return SUCCESS;
         }
         problemInfoUpdateManager.updateProblem(problem, false); // 若判定需更新，则开启异步线程
@@ -222,12 +223,15 @@ public class ProblemAction extends BaseAction{
         if (result.getTimeLimit() == 1) {
             // 非最终态
             response.setMessage("抓取对象正在更新...");
+            response.setCode(100);
         } else if (result.getTimeLimit() == 2) {
             // 最终态 不可用
             response.setMessage("抓取对象不完整");
+            response.setCode(200);
         } else {
             // 最终态 可用
             response.setMessage("抓取成功");
+            response.setCode(0);
         }
         return SUCCESS;
     }
@@ -238,9 +242,11 @@ public class ProblemAction extends BaseAction{
      */
     public String queryStatus() {
         submission = (Submission) baseService.query(Submission.class, id);
+        response = new Response();
         if (submission == null) {
             // 添加信息
             response.setMessage("The query doesn't exist");
+            response.setCode(200);
             return SUCCESS;
         }
         QueryResult result = new QueryResult();
@@ -248,6 +254,7 @@ public class ProblemAction extends BaseAction{
                 .setMemory(submission.getMemory()).setAdditionalInfo(submission.getAdditionalInfo());
         response.setBaseResult(result);
         response.setMessage("Success");
+        response.setCode(0);
         return SUCCESS;
     }
 
@@ -258,8 +265,10 @@ public class ProblemAction extends BaseAction{
     public String submitSolution() throws Exception{
         Map session = ActionContext.getContext().getSession();
         User user = (User) session.get("visitor");
+        response = new Response();
         if (user == null){
             response.setMessage("Please login first!");
+            response.setCode(101);
             return SUCCESS;
         }
         problem = (Problem) baseService.query(Problem.class, id);// 从数据库中获取problem bean
@@ -268,24 +277,29 @@ public class ProblemAction extends BaseAction{
         // 若提交不规范则重新提交
         if (problem == null){
             response.setMessage("Please submit via normal approach!");
+            response.setCode(200);
             return SUCCESS;
         }
         if (problem.getTimeLimit() == 1 || problem.getTimeLimit() == 2){
             response.setMessage("Crawling has not finished!");
+            response.setCode(200);
             return SUCCESS;
         }
 
         if (!languageList.containsKey(language)){
             response.setMessage("No such a language!");
+            response.setCode(200);
             return SUCCESS;
         }
         source = new String(Base64.decodeBase64(source), "utf-8");
         if (source.length() < 50){
             response.setMessage("Source code should be longer than 50 characters!");
+            response.setCode(200);
             return SUCCESS;
         }
         if (source.getBytes("utf-8").length > 30000){
             response.setMessage("Source code should be shorter than 30000 bytes in UTF-8!");
+            response.setCode(200);
             return SUCCESS;
         }
         submission = new Submission(); // 创建submission
@@ -307,6 +321,7 @@ public class ProblemAction extends BaseAction{
 
         submitManager.submitCode(submission);// 进行判题
         response.setMessage("Submitting in process...");
+        response.setCode(0);
 
         // 提交结束后，前端应该要获取啥
         SubmitResult result = new SubmitResult();
@@ -349,7 +364,7 @@ public class ProblemAction extends BaseAction{
         languageList = languageManager.getLanguages(problem.getOriginOJ(),problem.getOriginProb());
         //        languageList = (Map<Object, String>) sc.getAttribute(problem.getOriginOJ());
         isOpen = user.getShare();
-        log.info("......toSubmit response...... dispatcher:{}", GsonUtil.toJson(getRequest()));
+        log.info("......toSubmit response...... dispatcher:{}", GsonUtil.toJson(getRequest().setTitle(problem.getTitle()).setParaMap(languageList)));
         return SUCCESS;// 转发submit.jsp
     }
     // 非比赛中的提交 post /submit.action
@@ -855,16 +870,11 @@ public class ProblemAction extends BaseAction{
     private Request getRequest() {
         Request request = new Request();
         if (id != 0) request.setId(id);
-        if (uid != 0) request.setUid(uid);
         if (isOpen != 0) request.setIsOpen(isOpen);
         if (res != 0) request.setRes(res);
 
-        request.setOJId(OJId).setProbNum(probNum).setTitle(title)
-                .setProblem(problem).setDescription(description).setSubmission(submission)
-                .setDataList(dataList).setLanguage(language).setSource(source)
-                .setRedir(redir).setUn(un).set_64Format(_64Format)
-                .setIsSup(isSup).setDataTablesPage(dataTablesPage).setLanguageList(languageList)
-                .setSubmissionInfo(submissionInfo);
+        request.setOJId(OJId).setProbNum(probNum).setTitle(title).setDescription(description)
+                .setLanguage(language).setSource(source).setUn(un).setIsSup(isSup);
         return request;
     }
 

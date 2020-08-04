@@ -1,5 +1,6 @@
 package judge.remote.provider.hdu;
 
+import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,6 +12,7 @@ import judge.remote.account.RemoteAccount;
 import judge.remote.submitter.CanonicalSubmitter;
 import judge.remote.submitter.SubmissionInfo;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +39,7 @@ public class HDUSubmitter extends CanonicalSubmitter {
     @Override
     protected String submitCode(SubmissionInfo info, RemoteAccount remoteAccount, DedicatedHttpClient client) {
         HttpEntity entity = SimpleNameValueEntityFactory.create( //
+            "_usercode", encode(info.sourceCode),
             "check", "0", //
             "language", info.remotelanguage, //
             "problemid", info.remoteProblemId, //
@@ -45,6 +48,16 @@ public class HDUSubmitter extends CanonicalSubmitter {
         );
         client.post("/submit.php?action=submit", entity, HttpStatusValidator.SC_MOVED_TEMPORARILY);
         return null;
+    }
+
+    private String encode(String usercode) {
+        String res = "";
+        try {
+            String urlStr = URLEncoder.encode(usercode, "utf-8");
+            res = Base64.encodeBase64String(urlStr.getBytes("utf-8"));
+        } catch (Exception e) {
+        }
+        return res;
     }
 
 }

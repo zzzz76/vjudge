@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import judge.action.response.Response;
 import judge.bean.User;
 import judge.bean.UserSession;
 import judge.interceptor.AutoLoginInterceptor;
@@ -45,6 +46,7 @@ public class UserAction extends BaseAction implements ServletRequestAware {
     private String newpassword;
     private String redir;
     private HttpServletRequest request;
+    private Response response;
 
     private AutoLoginManager autoLoginManager;
 
@@ -52,6 +54,71 @@ public class UserAction extends BaseAction implements ServletRequestAware {
     private BaseService baseService;
 
     private UserService userService;
+
+    /**
+     * 提交账号api
+     */
+    public String submitAccount(){
+        Map session = ActionContext.getContext().getSession();
+        response = new Response();
+        if (OnlineTool.isLoggedIn()) {
+            response.setMessage("Is logged in");
+            response.setCode(0);
+            return SUCCESS;
+        }
+
+        User user = userService.getByUsername(username);
+        if (user == null) {
+            response.setMessage("Username not exists!");
+            response.setCode(200);
+        } else if (StringUtils.length(password) > 80 || !user.getPassword().equals(MD5.getMD5(password))) {
+            UserSession userSession = new UserSession();
+            userSession.setArriveTime(new Date(request.getSession().getCreationTime()));
+            userSession.setLoginTime(new Date());
+            userSession.setUserAgent((String) session.get("user-agent"));
+            userSession.setIp((String) session.get("remoteAddr"));
+            userSession.setUser(user);
+            userSession.setLoginSuccess(0);
+            session.put("user-session", userSession);
+            baseService.addOrModify(userSession);
+
+            response.setMessage("Username and password don't match!");
+            response.setCode(200);
+        } else {
+            response.setMessage("success");
+            response.setCode(0);
+
+            session.put("visitor", user);
+
+            //In case this visitor has logged in, remove auto login token for him
+            String username = CookieUtil.getCookie(ActionContext.getContext(), AutoLoginInterceptor.AUTO_LOGGIN_USERNAME_KEY);
+            String token = CookieUtil.getCookie(ActionContext.getContext(), AutoLoginInterceptor.AUTO_LOGGIN_TOKEN_KEY);
+            autoLoginManager.removeToken(username, token);
+
+            token = autoLoginManager.addUserEntry(user.getUsername());
+            CookieUtil.addCookie(ActionContext.getContext(), AutoLoginInterceptor.AUTO_LOGGIN_USERNAME_KEY, user.getUsername());
+            CookieUtil.addCookie(ActionContext.getContext(), AutoLoginInterceptor.AUTO_LOGGIN_TOKEN_KEY, token);
+
+            for (Iterator iterator = session.keySet().iterator(); iterator.hasNext();) {
+                String key = (String) iterator.next();
+                if (key.matches("C\\d+")) {
+                    session.remove(key);
+                }
+            }
+
+            UserSession userSession = new UserSession();
+            userSession.setArriveTime(new Date(request.getSession().getCreationTime()));
+            userSession.setLoginTime(new Date());
+            userSession.setUserAgent((String) session.get("user-agent"));
+            userSession.setIp((String) session.get("remoteAddr"));
+            userSession.setUser(user);
+            userSession.setLoginSuccess(1);
+            session.put("user-session", userSession);
+            baseService.addOrModify(userSession);
+
+        }
+        return SUCCESS;
+    }
 
     public String login(){
         Map session = ActionContext.getContext().getSession();
@@ -332,6 +399,12 @@ public class UserAction extends BaseAction implements ServletRequestAware {
     }
     public void setServletRequest(HttpServletRequest request) {
         this.request = request;
+    }
+    public Response getResponse() {
+        return response;
+    }
+    public void setResponse(Response response) {
+        this.response = response;
     }
     public void setAutoLoginManager(AutoLoginManager autoLoginManager) {
         this.autoLoginManager = autoLoginManager;
