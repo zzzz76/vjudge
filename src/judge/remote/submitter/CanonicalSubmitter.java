@@ -122,7 +122,7 @@ public abstract class CanonicalSubmitter implements Submitter {
                 LoginersHolder.getLoginer(getOjInfo().remoteOj).login(remoteAccount);// 完成远程登入，若之前登入过则不会重复登入
             }
             DedicatedHttpClient client = dedicatedHttpClientFactory.build(getHost(), remoteAccount.getContext(),
-                    getCharset());
+                    getCharset()); // 从连接池里 getHttpClient(hostname)
 
             Integer runIdBefore = getMaxRunId(info, client, false);// 完成末尾runID的获取
 

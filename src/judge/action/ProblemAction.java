@@ -1,5 +1,6 @@
 package judge.action;
 
+import java.net.URLDecoder;
 import java.util.*;
 
 import javax.servlet.ServletContext;
@@ -291,6 +292,7 @@ public class ProblemAction extends BaseAction{
             response.setCode(200);
             return SUCCESS;
         }
+        source = URLDecoder.decode(source, "utf-8");
         source = new String(Base64.decodeBase64(source), "utf-8");
         if (source.length() < 50){
             response.setMessage("Source code should be longer than 50 characters!");
