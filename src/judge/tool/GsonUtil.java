@@ -1,7 +1,6 @@
 package judge.tool;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.List;
@@ -14,6 +13,7 @@ import java.util.Map;
  */
 public class GsonUtil {
     private static Gson gson = null;
+    private static JsonParser parser = new JsonParser();
     static {
         if (gson == null) {
             gson = new GsonBuilder()//建造者模式设置不同的配置
@@ -102,8 +102,26 @@ public class GsonUtil {
         return map;
     }
 
-    /*public static void main(String[] args) {
-        ProblemAction problemAction = new ProblemAction();
-        System.out.println(GsonUtil.toJson(problemAction));
-    }*/
+    /**
+     * 获取json字符串成员
+     *
+     * @param gsonString
+     * @param finalName
+     * @param ObjectNames
+     * @return String
+     */
+    public static String getStrMem(String gsonString, String finalName, String... ObjectNames) {
+        JsonObject object = parser.parse(gsonString).getAsJsonObject();
+        for (String objectName: ObjectNames) {
+            object = object.getAsJsonObject(objectName);
+        }
+        JsonElement element = object.get(finalName);
+        if (element == null || element.isJsonNull()) {
+            return null;
+        } else if (element.isJsonObject() || element.isJsonArray()) {
+            return element.toString();
+        }
+        return element.getAsString();
+    }
+
 }

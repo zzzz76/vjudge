@@ -47,11 +47,9 @@
             <div id="ojs">
             <%
             for(judge.remote.RemoteOjInfo oj:judge.action.BaseAction.OJList){
-                if (oj.remoteOj == judge.remote.RemoteOj.HDU || oj.remoteOj == judge.remote.RemoteOj.LOCAL) {
                 %>
                 <span><a href="<%=oj.urlForIndexDisplay%>" target="_blank"><img src="${contextPath}/<%=oj.faviconUrl%>" /><%=oj.literal%></a></span>
                 <%
-                }
             }
             %>
 

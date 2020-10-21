@@ -34,9 +34,12 @@ public class SubstringNormalizer implements RemoteStatusNormalizer {
         put("Segmentation Fault", RemoteStatusType.RE);
         put("Floating Point Error", RemoteStatusType.RE);
         put("Crash", RemoteStatusType.RE);
+        put("Arithmetical Error", RemoteStatusType.RE);
 
         put("Running", RemoteStatusType.JUDGING);
         put("ing", RemoteStatusType.JUDGING);
+
+        put("Submit Failed", RemoteStatusType.SUBMIT_FAILED_TEMP);
     }};
     public static final SubstringNormalizer DEFAULT = new SubstringNormalizer();
     private LinkedHashMap<String, RemoteStatusType> statusTypeMap;

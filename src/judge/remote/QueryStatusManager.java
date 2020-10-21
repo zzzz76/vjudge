@@ -45,6 +45,7 @@ public class QueryStatusManager {
     @Autowired
     private RemoteStatusUpdateEvent updateEvent;
 
+    // 查询管理器的调用必然基于用户的初步提交
     public void createQuery(final Submission submission) {
         // 任务不存在时、任务繁忙时均不执行
         if (submission.getId() == 0) {
