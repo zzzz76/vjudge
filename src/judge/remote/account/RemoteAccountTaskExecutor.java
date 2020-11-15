@@ -43,7 +43,8 @@ public class RemoteAccountTaskExecutor {
     }
     
     ////////////////////////////////////////////////////////////////
-    
+
+    // 由守护线程(守护提交线程) 负责 处理阻塞队列中的消息
     public void init() {
         Thread executingThead = new Thread() {
             public void run() {
@@ -52,6 +53,8 @@ public class RemoteAccountTaskExecutor {
                     try {
                         task = running.take();
                         RemoteOj remoteOj = task.getRemoteOj();
+
+                        // 假设在处理一个提交任务时，存在多个账户可以选择
                         RemoteAccountRepository repo = repos.get(remoteOj);
                         if (repo != null) {
                             repo.handle(task);

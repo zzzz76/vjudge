@@ -79,7 +79,7 @@ public class BaseAction extends ActionSupport implements ParameterAware {
         OJList.add(NBUTInfo.INFO);
 //        OJList.add(FZUInfo.INFO);
 //        OJList.add(CSUInfo.INFO);
-//        OJList.add(SCUInfo.INFO);
+        OJList.add(SCUInfo.INFO);
 //        OJList.add(ACdreamInfo.INFO);
         OJList.add(LOCALInfo.INFO);
         OJList.add(JSKInfo.INFO);

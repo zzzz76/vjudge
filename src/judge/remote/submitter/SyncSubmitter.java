@@ -21,7 +21,7 @@ import java.util.HashMap;
  * On many OJs, after submitting, we can get the remote run ID from the direct
  * response of submitting request.
  *
- * @author Isun
+ * @author zzzz76
  */
 public abstract class SyncSubmitter implements Submitter {
     private final static Logger log = LoggerFactory.getLogger(SyncSubmitter.class);
@@ -31,6 +31,8 @@ public abstract class SyncSubmitter implements Submitter {
 
     @Override
     public void submitCode(SubmissionInfo info, Handler<SubmissionReceipt> handler) throws Exception {
+        // 在回调指定类中新建子线程，实现回调异步
+        // 三方提交器的回调异步，需要先在队列中排队等待
         new SubmitTask(info, handler).submit();
     }
 
