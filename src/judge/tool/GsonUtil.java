@@ -14,17 +14,15 @@ import java.util.Map;
 public class GsonUtil {
     private static Gson gson = null;
     private static JsonParser parser = new JsonParser();
+
     static {
         if (gson == null) {
             gson = new GsonBuilder()//建造者模式设置不同的配置
 //                .serializeNulls()//序列化为null对象
-                .setDateFormat("yyyy-MM-dd HH:mm:ss") //设置日期的格式
+                    .setDateFormat("yyyy-MM-dd HH:mm:ss") //设置日期的格式
 //                .disableHtmlEscaping()//防止对网址乱码 忽略对特殊字符的转换
-                .create();
+                    .create();
         }
-    }
-
-    private GsonUtil() {
     }
 
     /**
@@ -112,10 +110,35 @@ public class GsonUtil {
      */
     public static String getStrMem(String gsonString, String finalName, String... ObjectNames) {
         JsonObject object = parser.parse(gsonString).getAsJsonObject();
-        for (String objectName: ObjectNames) {
+        for (String objectName : ObjectNames) {
             object = object.getAsJsonObject(objectName);
         }
         JsonElement element = object.get(finalName);
+        if (element == null || element.isJsonNull()) {
+            return null;
+        } else if (element.isJsonObject() || element.isJsonArray()) {
+            return element.toString();
+        }
+        return element.getAsString();
+    }
+
+    private JsonObject object;
+
+    public GsonUtil() {
+    }
+
+    public GsonUtil(String gsonString) {
+        this.object = parser.parse(gsonString).getAsJsonObject();
+    }
+
+    /**
+     * 获取Json成员
+     *
+     * @param memName
+     * @return
+     */
+    public String getMemStr(String memName) {
+        JsonElement element = object.get(memName);
         if (element == null || element.isJsonNull()) {
             return null;
         } else if (element.isJsonObject() || element.isJsonArray()) {

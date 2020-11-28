@@ -1,21 +1,17 @@
 package judge.remote.provider.jsk;
 
 import judge.httpclient.DedicatedHttpClient;
-import judge.httpclient.HttpBodyValidator;
 import judge.httpclient.HttpStatusValidator;
 import judge.httpclient.SimpleNameValueEntityFactory;
 import judge.remote.RemoteOjInfo;
 import judge.remote.account.RemoteAccount;
-import judge.remote.submitter.CanonicalSubmitter;
 import judge.remote.submitter.SubmissionInfo;
-import judge.remote.submitter.SyncSubmitter;
+import judge.remote.submitter.ActiveSubmitter;
 import judge.tool.GsonUtil;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +21,7 @@ import java.util.Map;
  * Date: 2020-10-13
  */
 @Component
-public class JSKSubmitter extends SyncSubmitter {
+public class JSKSubmitter extends ActiveSubmitter {
 
     @Override
     public RemoteOjInfo getOjInfo() {

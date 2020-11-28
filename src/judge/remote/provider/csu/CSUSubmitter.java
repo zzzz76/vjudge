@@ -8,7 +8,7 @@ import judge.httpclient.HttpBodyValidator;
 import judge.httpclient.SimpleNameValueEntityFactory;
 import judge.remote.RemoteOjInfo;
 import judge.remote.account.RemoteAccount;
-import judge.remote.submitter.CanonicalSubmitter;
+import judge.remote.submitter.PassiveSubmitter;
 import judge.remote.submitter.SubmissionInfo;
 
 import org.apache.http.HttpEntity;
@@ -16,7 +16,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CSUSubmitter extends CanonicalSubmitter {
+public class CSUSubmitter extends PassiveSubmitter {
 
     @Override
     public RemoteOjInfo getOjInfo() {

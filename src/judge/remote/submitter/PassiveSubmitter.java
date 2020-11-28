@@ -25,8 +25,8 @@ import java.util.HashMap;
  *
  * @author Isun
  */
-public abstract class CanonicalSubmitter implements Submitter {
-    private final static Logger log = LoggerFactory.getLogger(CanonicalSubmitter.class);
+public abstract class PassiveSubmitter implements Submitter {
+    private final static Logger log = LoggerFactory.getLogger(PassiveSubmitter.class);
 
     @Autowired
     private DedicatedHttpClientFactory dedicatedHttpClientFactory;

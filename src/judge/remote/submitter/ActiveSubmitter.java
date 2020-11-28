@@ -23,8 +23,8 @@ import java.util.HashMap;
  *
  * @author zzzz76
  */
-public abstract class SyncSubmitter implements Submitter {
-    private final static Logger log = LoggerFactory.getLogger(SyncSubmitter.class);
+public abstract class ActiveSubmitter implements Submitter {
+    private final static Logger log = LoggerFactory.getLogger(ActiveSubmitter.class);
 
     @Autowired
     private DedicatedHttpClientFactory dedicatedHttpClientFactory;

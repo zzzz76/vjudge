@@ -6,7 +6,7 @@ import judge.httpclient.SimpleHttpResponseValidator;
 import judge.httpclient.SimpleNameValueEntityFactory;
 import judge.remote.RemoteOjInfo;
 import judge.remote.account.RemoteAccount;
-import judge.remote.submitter.CanonicalSubmitter;
+import judge.remote.submitter.PassiveSubmitter;
 import judge.remote.submitter.SubmissionInfo;
 
 import org.apache.commons.lang3.Validate;
@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 
 
 @Component
-public class ACdreamSubmitter extends CanonicalSubmitter {
+public class ACdreamSubmitter extends PassiveSubmitter {
 
     @Override
     public RemoteOjInfo getOjInfo() {

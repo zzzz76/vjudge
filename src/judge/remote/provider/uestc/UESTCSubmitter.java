@@ -12,7 +12,7 @@ import judge.httpclient.SimpleHttpResponseMapper;
 import judge.httpclient.SimpleHttpResponseValidator;
 import judge.remote.RemoteOjInfo;
 import judge.remote.account.RemoteAccount;
-import judge.remote.submitter.CanonicalSubmitter;
+import judge.remote.submitter.PassiveSubmitter;
 import judge.remote.submitter.SubmissionInfo;
 
 import org.apache.commons.lang3.Validate;
@@ -24,7 +24,7 @@ import org.apache.struts2.json.JSONUtil;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UESTCSubmitter extends CanonicalSubmitter {
+public class UESTCSubmitter extends PassiveSubmitter {
 
     @Override
     public RemoteOjInfo getOjInfo() {

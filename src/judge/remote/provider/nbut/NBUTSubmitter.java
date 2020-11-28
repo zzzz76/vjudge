@@ -12,11 +12,11 @@ import judge.httpclient.HttpStatusValidator;
 import judge.httpclient.SimpleNameValueEntityFactory;
 import judge.remote.RemoteOjInfo;
 import judge.remote.account.RemoteAccount;
-import judge.remote.submitter.CanonicalSubmitter;
+import judge.remote.submitter.PassiveSubmitter;
 import judge.remote.submitter.SubmissionInfo;
 
 @Component
-public class NBUTSubmitter extends CanonicalSubmitter {
+public class NBUTSubmitter extends PassiveSubmitter {
 
     @Override
     public RemoteOjInfo getOjInfo() {
