@@ -65,9 +65,10 @@ public class JSKQuerier extends AuthenticatedQuerier {
         post.setHeader("X-Requested-With", "XMLHttpRequest");
         post.setHeader("X-XSRF-TOKEN", token);
         String post_json = client.execute(post, HttpStatusValidator.SC_OK).getBody();
-        String status_code = GsonUtil.getStrMem(post_json, "status");
+        GsonUtil gsonUtil = new GsonUtil(post_json);
+        String status_code = gsonUtil.getStrMem("status");
         if ("finished".equals(status_code)) {
-            status_code = GsonUtil.getStrMem(post_json, "reason", "data");
+            status_code = gsonUtil.getStrMem("reason", "data");
         }
 
         SubmissionRemoteStatus status = new SubmissionRemoteStatus();
@@ -80,13 +81,13 @@ public class JSKQuerier extends AuthenticatedQuerier {
             get.setHeader("X-Requested-With", "XMLHttpRequest");
             get.setHeader("X-XSRF-TOKEN", token);
             String get_json = client.execute(get, HttpStatusValidator.SC_OK).getBody();
-            List<Map<String, Object>> list = GsonUtil.jsonToListMaps(GsonUtil.getStrMem(get_json, "data"));
+            List<Map<String, Object>> list = GsonUtil.jsonToListMaps(new GsonUtil(get_json).getStrMem("data"));
             status.executionTime = ((Double) list.get(0).get("used_time")).intValue();
             status.executionMemory = ((Double) list.get(0).get("used_mem")).intValue();
 
         } else if (status.statusType == RemoteStatusType.CE) {
             // 补充编译错误信息
-            status.compilationErrorInfo = GsonUtil.getStrMem(post_json, "message", "data");
+            status.compilationErrorInfo = gsonUtil.getStrMem("message", "data");
         }
         return status;
     }

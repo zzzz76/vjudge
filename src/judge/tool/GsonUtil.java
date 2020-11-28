@@ -100,28 +100,6 @@ public class GsonUtil {
         return map;
     }
 
-    /**
-     * 获取json字符串成员
-     *
-     * @param gsonString
-     * @param finalName
-     * @param ObjectNames
-     * @return String
-     */
-    public static String getStrMem(String gsonString, String finalName, String... ObjectNames) {
-        JsonObject object = parser.parse(gsonString).getAsJsonObject();
-        for (String objectName : ObjectNames) {
-            object = object.getAsJsonObject(objectName);
-        }
-        JsonElement element = object.get(finalName);
-        if (element == null || element.isJsonNull()) {
-            return null;
-        } else if (element.isJsonObject() || element.isJsonArray()) {
-            return element.toString();
-        }
-        return element.getAsString();
-    }
-
     private JsonObject object;
 
     public GsonUtil() {
@@ -132,13 +110,18 @@ public class GsonUtil {
     }
 
     /**
-     * 获取Json成员
+     * 获取json字符串成员
      *
-     * @param memName
+     * @param finalName
+     * @param ObjectNames
      * @return
      */
-    public String getMemStr(String memName) {
-        JsonElement element = object.get(memName);
+    public String getStrMem(String finalName, String... ObjectNames) {
+        JsonObject tmpObject = object;
+        for (String objectName: ObjectNames) {
+            tmpObject = tmpObject.getAsJsonObject(objectName);
+        }
+        JsonElement element = tmpObject.get(finalName);
         if (element == null || element.isJsonNull()) {
             return null;
         } else if (element.isJsonObject() || element.isJsonArray()) {

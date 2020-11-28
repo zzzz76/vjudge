@@ -47,12 +47,13 @@ public class MXTSubmitter extends ActiveSubmitter {
         HttpPost post = new HttpPost("/submit/7/"+ info.remoteProblemId +"/");
         post.setEntity(entity);
         String result = client.execute(post, HttpStatusValidator.SC_OK).getBody();
-        String status = GsonUtil.getStrMem(result, "success");
+        GsonUtil gsonUtil = new GsonUtil(result);
+        String status = gsonUtil.getStrMem("success");
         if (Objects.equals(status, "false")) {
             // 返回错误信息
-            return GsonUtil.getStrMem(result, "msg");
+            return gsonUtil.getStrMem("msg");
         } else {
-            info.remoteRunId = GsonUtil.getStrMem(result,"solution_id");
+            info.remoteRunId = gsonUtil.getStrMem("solution_id");
             return null;
         }
     }

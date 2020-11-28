@@ -35,13 +35,15 @@ public class JSKCrawler extends SimpleCrawler {
     @Override
     protected void populateProblemInfo(RawProblemInfo info, String problemId, String html) {
         String json = Tools.regFind(html, "var problem=(\\{[\\s\\S]*?\\});var").trim();
-        info.title = GsonUtil.getStrMem(json, "title");
-        info.timeLimit = Integer.parseInt(GsonUtil.getStrMem(json, "time_limit"));
-        info.memoryLimit = Integer.parseInt(GsonUtil.getStrMem(json, "mem_limit"));
-        info.description = GsonUtil.getStrMem(json, "description");
-        info.sampleInput = GsonUtil.getStrMem(json, "sample_input");
-        info.sampleOutput = GsonUtil.getStrMem(json, "sample_output");
-        info.hint = GsonUtil.getStrMem(json, "hint");
-        info.source = GsonUtil.getStrMem(json, "source");
+        GsonUtil gsonUtil = new GsonUtil(json);
+
+        info.title = gsonUtil.getStrMem("title");
+        info.timeLimit = Integer.parseInt(gsonUtil.getStrMem("time_limit"));
+        info.memoryLimit = Integer.parseInt(gsonUtil.getStrMem("mem_limit"));
+        info.description = gsonUtil.getStrMem("description");
+        info.sampleInput = gsonUtil.getStrMem("sample_input");
+        info.sampleOutput = gsonUtil.getStrMem("sample_output");
+        info.hint = gsonUtil.getStrMem("hint");
+        info.source = gsonUtil.getStrMem("source");
     }
 }

@@ -36,17 +36,18 @@ public class MXTCrawler extends AuthenticatedCrawler {
         GsonUtil gsonUtil = new GsonUtil(post_json);
 
         RawProblemInfo info = new RawProblemInfo();
-        info.title = gsonUtil.getMemStr("title");
-        info.timeLimit = Integer.parseInt(gsonUtil.getMemStr("time_limit")) * 1000;
-        info.memoryLimit = Integer.parseInt(gsonUtil.getMemStr("memory_limit")) * 1024;
+        info.title = gsonUtil.getStrMem("title");
+        info.timeLimit = Integer.parseInt(gsonUtil.getStrMem("time_limit")) * 1000;
+        info.memoryLimit = Integer.parseInt(gsonUtil.getStrMem("memory_limit")) * 1024;
         info.description = "<link rel=\"stylesheet\" href=\"https://www.maxuetang.cn/lxojres/mxt-editor/css/mxt-editor.min.css?v=20190117\"/>";
-        info.description += gsonUtil.getMemStr("description");
-        info.input = gsonUtil.getMemStr("input");
-        info.output = gsonUtil.getMemStr("output");
-        info.sampleInput = gsonUtil.getMemStr("sample_input");
-        info.sampleOutput = gsonUtil.getMemStr("sample_output");
-        info.hint = gsonUtil.getMemStr("hint");
-        info.source = gsonUtil.getMemStr("source");
+        info.description += gsonUtil.getStrMem("description");
+        info.input = gsonUtil.getStrMem("input");
+        info.output = gsonUtil.getStrMem("output");
+        // 原生页面在此处进行了‘<>’的符号替换，此处尚未加以处理
+        info.sampleInput = "<pre>" + gsonUtil.getStrMem("sample_input") + "</pre>";
+        info.sampleOutput = "<pre>" + gsonUtil.getStrMem("sample_output") + "</pre>";
+        info.hint = gsonUtil.getStrMem("hint");
+        info.source = gsonUtil.getStrMem("source");
         info.url = getHost().toURI() + "/course/" + problemId + ".html";
 
         Validate.isTrue(!StringUtils.isBlank(info.title));

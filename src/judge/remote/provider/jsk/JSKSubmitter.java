@@ -69,7 +69,7 @@ public class JSKSubmitter extends ActiveSubmitter {
         post.setHeader("X-Requested-With", "XMLHttpRequest");
         post.setHeader("X-XSRF-TOKEN", token);
         String result = client.execute(post, HttpStatusValidator.SC_OK).getBody();
-        info.remoteRunId = GsonUtil.getStrMem(result,"data");
+        info.remoteRunId = new GsonUtil(result).getStrMem("data");
         return null;
     }
 

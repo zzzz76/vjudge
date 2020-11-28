@@ -34,14 +34,15 @@ public class MXTQuerier extends AuthenticatedQuerier {
     protected SubmissionRemoteStatus query(SubmissionInfo info, RemoteAccount remoteAccount, DedicatedHttpClient client) throws Exception {
         HttpPost post = new HttpPost("/submit/solution/" + info.remoteRunId + "/");
         String post_json = client.execute(post, HttpStatusValidator.SC_OK).getBody();
+        GsonUtil gsonUtil = new GsonUtil(post_json);
 
         SubmissionRemoteStatus status = new SubmissionRemoteStatus();
-        status.rawStatus = statusArray[Integer.parseInt(GsonUtil.getStrMem(post_json, "result"))];
-        status.executionTime = Integer.parseInt(GsonUtil.getStrMem(post_json, "time"));
-        status.executionMemory = Integer.parseInt(GsonUtil.getStrMem(post_json, "memory"));
+        status.rawStatus = statusArray[Integer.parseInt(gsonUtil.getStrMem( "result"))];
+        status.executionTime = Integer.parseInt(gsonUtil.getStrMem("time"));
+        status.executionMemory = Integer.parseInt(gsonUtil.getStrMem("memory"));
         // 从原生状态映射到统一状态
         status.statusType = SubstringNormalizer.DEFAULT.getStatusType(status.rawStatus);
-        status.failCase = (int) (Double.parseDouble(GsonUtil.getStrMem(post_json, "pass_rate")) * 100);
+        status.failCase = (int) (Double.parseDouble(gsonUtil.getStrMem("pass_rate")) * 100);
         if (status.statusType.finalized && status.statusType != RemoteStatusType.AC
                 && status.statusType != RemoteStatusType.CE) {
             status.rawStatus += " on pass rate " + status.failCase + "%";
