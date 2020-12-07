@@ -39,6 +39,7 @@ public class MXTSubmitter extends ActiveSubmitter {
 
     @Override
     protected String submitCode(SubmissionInfo info, RemoteAccount remoteAccount, DedicatedHttpClient client) throws Exception {
+        client.get("/favicon.ico");
         HttpEntity entity = SimpleNameValueEntityFactory.create(
                 "language", info.remotelanguage,
                 "notes_id", "0",

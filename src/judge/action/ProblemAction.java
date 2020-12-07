@@ -4,7 +4,6 @@ import java.util.*;
 
 import javax.servlet.ServletContext;
 
-import judge.action.request.Request;
 import judge.action.response.*;
 import judge.bean.*;
 import judge.remote.ProblemInfoUpdateManager;
@@ -12,7 +11,6 @@ import judge.remote.RunningSubmissions;
 import judge.remote.SubmitCodeManager;
 import judge.remote.language.LanguageManager;
 import judge.remote.status.RemoteStatusType;
-import judge.tool.GsonUtil;
 import judge.tool.OnlineTool;
 import judge.tool.Tools;
 
@@ -76,13 +74,11 @@ public class ProblemAction extends BaseAction{
 
     // 罗列题目 get /toListProblem.action
     public String toListProblem() {
-        log.info("......toListProblem request...... get:{}", GsonUtil.toJson(getRequest()));
         Map session = ActionContext.getContext().getSession();
         if (session.containsKey("error")){
             this.addActionError((String) session.get("error"));
         }
         session.remove("error");
-        log.info("......toListProblem response...... dispatcher:{}", GsonUtil.toJson(getRequest()));
         return SUCCESS;// 转发list.jsp --> post /listProblem.action
     }
     // 题目分页 post /listProblem.action
@@ -99,8 +95,6 @@ public class ProblemAction extends BaseAction{
         params.put("start", start);
         params.put("length", length);
         params.put("draw", draw);
-        Request request = getRequest().setParaMap(params);
-        log.info("......listProblem request...... post:{}", GsonUtil.toJson(request));
 
         // (Re)crawl the problem if necessary
         if (OJListLiteral.contains(OJId) && !StringUtils.isBlank(probNum)) {
@@ -169,20 +163,16 @@ public class ProblemAction extends BaseAction{
             this.addActionError((String) session.get("error"));
         }
         session.remove("error");
-        log.info("......listProblem response...... dataTablesPage:{}", GsonUtil.toJson(dataTablesPage));
 
         return SUCCESS;// 返回(json)dataTablesPage数据
     }
     // 添加题目 get /recrawlProblem.action
     public String recrawlProblem() {
-        log.info("......recrawlProblem request...... get:{}", GsonUtil.toJson(getRequest()));
         problemInfoUpdateManager.updateProblem(OJId, probNum, true);
-        log.info("......recrawlProblem response...... redirect:{}", GsonUtil.toJson(getRequest()));
         return SUCCESS;// 重定向 /viewProblem.action?OJId=${OJId}&probNum=${probNum}
     }
     // 显示题目 get /viewProblem.action
     public String viewProblem(){
-        log.info("......viewProblem request...... get:{}", GsonUtil.toJson(getRequest()));
         if (!StringUtils.isBlank(OJId) && !StringUtils.isBlank(probNum)) {
             problem = judgeService.findProblem(OJId, probNum);
         } else {
@@ -192,7 +182,6 @@ public class ProblemAction extends BaseAction{
         }
         _64Format = lf.get(problem.getOriginOJ());
         problemInfoUpdateManager.updateProblem(problem, false); // 更新判定 -> 开启了异步线程
-        log.info("......viewProblem response...... dispatcher:{}", GsonUtil.toJson(getRequest().setTitle(problem.getTitle())));
         return SUCCESS;// 转发view.jsp --> 异步快则主线程直接输出，异步过慢则自动刷新
     }
 
@@ -346,7 +335,6 @@ public class ProblemAction extends BaseAction{
     }
     // 进入非比赛提交页面 get /toSubmit.action
     public String toSubmit(){
-        log.info("......toSubmit request...... get:{}", GsonUtil.toJson(getRequest()));
         Map session = ActionContext.getContext().getSession();
         User user = (User) session.get("visitor");
         if (user == null){
@@ -362,12 +350,10 @@ public class ProblemAction extends BaseAction{
         languageList = languageManager.getLanguages(problem.getOriginOJ(),problem.getOriginProb());
         //        languageList = (Map<Object, String>) sc.getAttribute(problem.getOriginOJ());
         isOpen = user.getShare();
-        log.info("......toSubmit response...... dispatcher:{}", GsonUtil.toJson(getRequest().setTitle(problem.getTitle()).setParaMap(languageList)));
         return SUCCESS;// 转发submit.jsp
     }
     // 非比赛中的提交 post /submit.action
     public String submit() throws Exception{
-        log.info("......submit request...... post:{}", GsonUtil.toJson(getRequest()));
         Map session = ActionContext.getContext().getSession();
         User user = (User) session.get("visitor");
         if (user == null){
@@ -423,12 +409,10 @@ public class ProblemAction extends BaseAction{
         }
 
         submitManager.submitCode(submission);// 进行判题
-        log.info("......submit response...... redirect");
         return SUCCESS;// 重定向 /status.action
     }
     // 显示提交 get /status.action
     public String status() {
-        log.info("......status request...... get:{}", GsonUtil.toJson(getRequest()));
         if (id != 0){
             problem = (Problem) baseService.query(Problem.class, id);
             OJId = problem.getOriginOJ();
@@ -443,7 +427,6 @@ public class ProblemAction extends BaseAction{
         }
         session.remove("error");
 
-        log.info("......status response...... dispatcher:{}", GsonUtil.toJson(getRequest()));
         return SUCCESS;// 转发status.jsp
     }
     // 提交分页 post /fetchStatus.action
@@ -452,13 +435,6 @@ public class ProblemAction extends BaseAction{
         String length = getParameter("length");
         String draw = getParameter("draw");
         String orderBy = getParameter("orderBy");
-
-        Map<String, String> params = new HashMap<>();
-        params.put("start", start);
-        params.put("length", length);
-        params.put("draw", draw);
-        params.put("orderBy", orderBy);
-        log.info("......fetchStatus request...... get:{}", GsonUtil.toJson(getRequest().setParaMap(params)));
 
         Map session = ActionContext.getContext().getSession();
         Map paraMap = new HashMap();
@@ -593,7 +569,6 @@ public class ProblemAction extends BaseAction{
         dataTablesPage.setData(aaData);
         dataTablesPage.setDraw(Integer.parseInt(draw));
 
-        log.info("......fetchStatus response...... dataTablesPage:{}", GsonUtil.toJson(dataTablesPage));
         return SUCCESS;// 返回(json)dataTablesPage数据
     }
     // 进入修改题面页面 get /toEditDescription.action
@@ -874,17 +849,5 @@ public class ProblemAction extends BaseAction{
     public void setResponse(Response response) {
         this.response = response;
     }
-
-    private Request getRequest() {
-        Request request = new Request();
-        if (id != 0) request.setId(id);
-        if (isOpen != 0) request.setIsOpen(isOpen);
-        if (res != 0) request.setRes(res);
-
-        request.setOJId(OJId).setProbNum(probNum).setTitle(title).setDescription(description)
-                .setLanguage(language).setSource(source).setUn(un).setIsSup(isSup);
-        return request;
-    }
-
 
 }

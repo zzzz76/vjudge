@@ -31,6 +31,7 @@ public class MXTCrawler extends AuthenticatedCrawler {
 
     @Override
     protected RawProblemInfo crawl(String problemId, RemoteAccount remoteAccount, DedicatedHttpClient client) throws Exception {
+        client.get("/favicon.ico");
         HttpPost post = new HttpPost("/problem/7/" + problemId + "/one");
         String post_json = client.execute(post, HttpStatusValidator.SC_OK).getBody();
         GsonUtil gsonUtil = new GsonUtil(post_json);

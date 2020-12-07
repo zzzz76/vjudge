@@ -33,7 +33,7 @@
         <s:include value="/top.jsp" />
 
 		<div id="title">
-			<div style="text-align: center">Virtual Judge</div>
+			<div style="text-align: center">ECNU Virtual Judge</div>
 		
 		</div>
 

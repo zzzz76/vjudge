@@ -13,7 +13,9 @@
        </ul>
     </li>
 	<li style="float:right"><s:if test="#session.visitor != null"><a id="logout" href="javascript:void(0)">LOGOUT</a></s:if><s:else><a class="login" href="javascript:void(0)">LOGIN</a></s:else></li>
-	<li style="float:right"><s:if test="#session.visitor != null"><a id="my_account" uid="<s:property value='#session.visitor.id' />" href="${contextPath}/user/toUpdate.action?uid=<s:property value="#session.visitor.id" />"><s:property value="#session.visitor.username" /></a></s:if><s:else><a class="register" href="javascript:void(0)">REGISTER</a></s:else></li>
+	<li style="float:right"><s:if test="#session.visitor != null"><a id="my_account" uid="<s:property value='#session.visitor.id' />" href="${contextPath}/user/toUpdate.action?uid=<s:property value="#session.visitor.id" />"><s:property value="#session.visitor.username" /></a></s:if><s:else>
+        <%--<a class="register" href="javascript:void(0)">REGISTER</a>--%>
+    </s:else></li>
 </ul>
 </div>
 

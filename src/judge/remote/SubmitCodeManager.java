@@ -37,7 +37,7 @@ public class SubmitCodeManager {
             return;
         }
         if (!runningSubmissions.contains(submission.getId())) {
-            log.info("Create submit: " + runningSubmissions.getLogKey(submission));// 打印submission的信息
+            log.info("Create submit: " + runningSubmissions.getLogKey(submission) + " [" + submission.getUsername() + "]");// 打印submission的信息
             runningSubmissions.add(submission);// 缓存submission和最近时间
             new SubmitCodeTask(submission).submit();// 异步线程
         }
