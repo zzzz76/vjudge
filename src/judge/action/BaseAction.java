@@ -26,6 +26,7 @@ import judge.remote.provider.poj.POJInfo;
 import judge.remote.provider.scu.SCUInfo;
 import judge.remote.provider.sgu.SGUInfo;
 import judge.remote.provider.spoj.SPOJInfo;
+import judge.remote.provider.tkoj.TKOJInfo;
 import judge.remote.provider.tyvj.TyvjInfo;
 import judge.remote.provider.uestc.UESTCInfo;
 import judge.remote.provider.uestc_old.UESTCOldInfo;
@@ -85,6 +86,7 @@ public class BaseAction extends ActionSupport implements ParameterAware {
         OJList.add(LOCALInfo.INFO);
         OJList.add(JSKInfo.INFO);
         OJList.add(MXTInfo.INFO);
+        OJList.add(TKOJInfo.INFO);
         Collections.sort(OJList, new Comparator<RemoteOjInfo>() {
             @Override
             public int compare(RemoteOjInfo oj1, RemoteOjInfo oj2) {

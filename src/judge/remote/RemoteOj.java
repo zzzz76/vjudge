@@ -28,5 +28,6 @@ public enum RemoteOj {
     ZTrening, LOCAL, //
     JSK, //
     MXT, //
+    TKOJ, //
 
 }
