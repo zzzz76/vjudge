@@ -122,12 +122,12 @@ public class TKOJCaptchaRecognizer {
         List<BufferedImage> subImgs = splitImage(image);
         Set<Integer> graySet = getGraySet(subImgs.get(subImgs.size() - 1));
 
-        printImage(image, graySet);
+//        printImage(image, graySet);
         for (int i = 0; i < subImgs.size() - 1; i++) {
             // 根据特征色，依次识别子图片
             ans.append(recognizeSymbol(subImgs.get(i), graySet));
         }
-
+        System.out.printf("recognize: %s\n", ans.toString());
         return ans.toString();
     }
 

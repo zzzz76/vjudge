@@ -33,14 +33,14 @@ public class TKOJSubmitter extends PassiveSubmitter{
 
     @Override
     protected long getSubmitReceiptDelay() {
-        return 5000;
+        return 10000;
     }
 
     @Override
     protected Integer getMaxRunId(SubmissionInfo info, DedicatedHttpClient client, boolean submitted) throws Exception {
         // 从状态页面中中获取max runid
-        String html = client.get("/status.php?user_id=" + info.remoteAccountId, HttpStatusValidator.SC_OK).getBody();
-        Matcher matcher = Pattern.compile("reinfo.php\\?sid=(\\d+)").matcher(html);
+        String html = client.get("/status.php?problem_id=" + info.remoteProblemId + "&user_id=" + info.remoteAccountId, HttpStatusValidator.SC_OK).getBody();
+        Matcher matcher = Pattern.compile("prevtop=(\\d+)").matcher(html);
         return matcher.find() ? Integer.parseInt(matcher.group(1)) : -1;
     }
 

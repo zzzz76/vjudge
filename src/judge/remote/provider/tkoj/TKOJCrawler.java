@@ -38,12 +38,13 @@ public class TKOJCrawler extends SimpleCrawler {
         info.title = Tools.regFind(html, "<h2>" + problemId + ": ([\\s\\S]*?)</h2>").trim();
         info.timeLimit = Integer.valueOf(Tools.regFind(html, "Time Limit: </span>([1-9]\\d*) Sec")) * 1000;
         info.memoryLimit = Integer.valueOf(Tools.regFind(html, "Memory Limit: </span>([1-9]\\d*) MB")) * 1024;
-        info.description = Tools.regFind(html, "<h2>Description</h2><div class=\"content\">([\\s\\S]*?)</div>");
+        info.description = Tools.regFind(html, "<h2>Description</h2><div class=\"content\">([\\s\\S]*?)</div><h2>Input</h2");
         info.input = Tools.regFind(html, "<h2>Input</h2><div class=\"content\">([\\s\\S]*?)</div>");
         info.output = Tools.regFind(html, "<h2>Output</h2><div class=\"content\">([\\s\\S]*?)</div>");
         info.sampleInput = Tools.regFind(html, "<h2>Sample Input</h2>(<pre[\\s\\S]*?</pre>)");
         info.sampleOutput = Tools.regFind(html, "<h2>Sample Output</h2>(<pre[\\s\\S]*?</pre>)");
         info.hint = Tools.regFind(html, "<h2>HINT</h2><div class=\"content\">([\\s\\S]*?)</div>");
-        info.source = Tools.regFind(html, "<h2>Source</h2><div class=\"content\">([\\s\\S]*?)</div>");
+        info.source = Tools.regFind(html, "<h2>Source</h2><div class=\"content\">([\\s\\S]*?)</div>").replaceAll("<[\\s\\S]*?>", "");
     }
+
 }
