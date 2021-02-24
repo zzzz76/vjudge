@@ -51,6 +51,7 @@ public class DedicatedHttpClient {
         return execute(request, new SimpleHttpResponseMapper<SimpleHttpResponse>() {
             @Override
             public SimpleHttpResponse map(SimpleHttpResponse response) throws Exception {
+//                System.out.println(response.getBody() + " | " + response.getStatusCode());
             	request.setHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36");
             	request.setHeader("Accept-Language","en-GB,en;q=0.8");
                 for (SimpleHttpResponseValidator validator : validators) {

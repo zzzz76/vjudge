@@ -1,10 +1,9 @@
-package judge.remote.provider.TKOJ;
+package judge.remote.provider.hdu;
 
 import judge.BaseJunitTest;
 import judge.bean.Description;
 import judge.bean.Problem;
 import judge.remote.crawler.RawProblemInfo;
-import judge.remote.provider.tkoj.TKOJCrawler;
 import judge.tool.Handler;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -14,15 +13,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
 
 /**
- * 对TK题库爬取器进行测试
+ * 对杭电题库爬取器进行测试
  *
  * @author zzzz76
  */
-public class TKOJCrawlerTest extends BaseJunitTest{
-    private final static Logger log = LoggerFactory.getLogger(TKOJCrawlerTest.class);
+public class HDUCrawlerTest extends BaseJunitTest{
+    private final static Logger log = LoggerFactory.getLogger(HDUCrawlerTest.class);
 
     @Autowired
-    private TKOJCrawler crawler;
+    private HDUCrawler crawler;
 
     private Problem problem = new Problem();
     private Description description = new Description();
