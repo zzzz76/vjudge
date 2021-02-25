@@ -30,6 +30,11 @@ public class HDUSubmitter extends PassiveSubmitter {
     }
 
     @Override
+    protected long getSubmitReceiptDelay() {
+        return 10000;
+    }
+
+    @Override
     protected Integer getMaxRunId(SubmissionInfo info, DedicatedHttpClient client, boolean submitted) {
         String html = client.get("/status.php?user=" + info.remoteAccountId + "&pid=" + info.remoteProblemId).getBody();
         Matcher matcher = Pattern.compile("<td height=22px>(\\d+)").matcher(html);

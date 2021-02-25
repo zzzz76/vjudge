@@ -52,7 +52,7 @@ public class HDUSubmitterTest extends BaseJunitTest {
         SubmissionInfo info = new SubmissionInfo();
         info.remotelanguage = "2";
         info.remoteOj = RemoteOj.HDU;
-        info.remoteProblemId = "1000";
+        info.remoteProblemId = "1003";
         info.sourceCode =
                 "#include <cstdio>\n" +
                 "#include <cstdlib>\n" +

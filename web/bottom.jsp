@@ -3,6 +3,7 @@
 <%@ include file="/contextPath.jsp" %>
 
 <div style="text-align:center;margin-top:30px;clear:both;font-size:80%">
+	<marquee scrollAmount=2 width=450>-- Submit Failed为提交失败，点击Result重新提交 --</marquee>
 	<hr />
 	<%--FAQ | About Virtual Judge | <a href="https://groups.google.com/group/virtual-judge" target="_blank">Forum</a> | <a href="${contextPath}/discuss.action" target="_blank">Discuss</a> | <a href="https://github.com/zhblue/vjudge" target="_blank">Open Source Project</a><br />--%>
 	All Copyright Reserved ©2020 ECNU TEAM
