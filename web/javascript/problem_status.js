@@ -69,7 +69,7 @@ $(function() {
     		if (match == null) {
     			break;
     		}
-    		queryParam[match[1]] = match[2];
+    		queryParam[match[1]] = decodeURI(match[2]);
     	}
     	setQueryParam(queryParam)
     	
