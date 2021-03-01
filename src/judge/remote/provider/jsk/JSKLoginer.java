@@ -44,8 +44,7 @@ public class JSKLoginer extends RetentiveLoginer {
         post.setEntity(entity);
         post.setHeader("X-Requested-With", "XMLHttpRequest");
         post.setHeader("X-XSRF-TOKEN", token);
-        String result = client.execute(post, HttpStatusValidator.SC_OK, new HttpBodyValidator("success")).getBody();
-        System.out.print(result);
+        client.execute(post, HttpStatusValidator.SC_OK, new HttpBodyValidator("success"));
     }
 
 }

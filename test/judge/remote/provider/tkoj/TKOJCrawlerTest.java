@@ -1,10 +1,9 @@
-package judge.remote.provider.TKOJ;
+package judge.remote.provider.tkoj;
 
 import judge.BaseJunitTest;
 import judge.bean.Description;
 import judge.bean.Problem;
 import judge.remote.crawler.RawProblemInfo;
-import judge.remote.provider.tkoj.TKOJCrawler;
 import judge.tool.Handler;
 import org.junit.Test;
 import org.slf4j.Logger;

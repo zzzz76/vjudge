@@ -1,8 +1,7 @@
-package judge.remote.provider.TKOJ;
+package judge.remote.provider.tkoj;
 
 import judge.BaseJunitTest;
 import judge.remote.RemoteOj;
-import judge.remote.provider.tkoj.TKOJSubmitter;
 import judge.remote.submitter.SubmissionInfo;
 import judge.remote.submitter.SubmissionReceipt;
 import judge.tool.Handler;

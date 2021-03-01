@@ -1,11 +1,8 @@
-package judge.remote.provider.TKOJ;
+package judge.remote.provider.tkoj;
 
 import judge.BaseJunitTest;
 import judge.remote.RemoteOj;
-import judge.remote.RemoteOjInfo;
 import judge.remote.account.RemoteAccount;
-import judge.remote.provider.tkoj.TKOJInfo;
-import judge.remote.provider.tkoj.TKOJLoginer;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.BasicCookieStore;
