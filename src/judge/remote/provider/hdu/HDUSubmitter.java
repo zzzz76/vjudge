@@ -9,7 +9,7 @@ import judge.httpclient.HttpStatusValidator;
 import judge.httpclient.SimpleNameValueEntityFactory;
 import judge.remote.RemoteOjInfo;
 import judge.remote.account.RemoteAccount;
-import judge.remote.submitter.PassiveSubmitter;
+import judge.remote.submitter.ComplexSubmitter;
 import judge.remote.submitter.SubmissionInfo;
 
 import org.apache.commons.codec.binary.Base64;
@@ -17,7 +17,7 @@ import org.apache.http.HttpEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class HDUSubmitter extends PassiveSubmitter {
+public class HDUSubmitter extends ComplexSubmitter {
 
     @Override
     public RemoteOjInfo getOjInfo() {

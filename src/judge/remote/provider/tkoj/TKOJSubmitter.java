@@ -5,7 +5,7 @@ import judge.httpclient.HttpStatusValidator;
 import judge.httpclient.SimpleNameValueEntityFactory;
 import judge.remote.RemoteOjInfo;
 import judge.remote.account.RemoteAccount;
-import judge.remote.submitter.PassiveSubmitter;
+import judge.remote.submitter.ComplexSubmitter;
 import judge.remote.submitter.SubmissionInfo;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  * Date: 2020-12-10
  */
 @Component
-public class TKOJSubmitter extends PassiveSubmitter{
+public class TKOJSubmitter extends ComplexSubmitter {
     @Override
     public RemoteOjInfo getOjInfo() {
         return TKOJInfo.INFO;

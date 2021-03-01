@@ -1,8 +1,6 @@
-package judge.remote.provider.hdu;
+package judge.remote.provider.nbut;
 
 import judge.BaseJunitTest;
-import judge.bean.Description;
-import judge.bean.Problem;
 import judge.remote.crawler.RawProblemInfo;
 import judge.tool.Handler;
 import org.junit.Test;
@@ -13,15 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
 
 /**
- * 对杭电题库爬取器进行测试
+ * 对宁波工程学院爬取器进行测试
  *
  * @author zzzz76
  */
-public class HDUCrawlerTest extends BaseJunitTest{
-    private final static Logger log = LoggerFactory.getLogger(HDUCrawlerTest.class);
+public class NBUTCrawlerTest extends BaseJunitTest{
+    private final static Logger log = LoggerFactory.getLogger(NBUTCrawlerTest.class);
 
     @Autowired
-    private HDUCrawler crawler;
+    private NBUTCrawler crawler;
 
     @Test
     public void testCrawl() throws Exception {

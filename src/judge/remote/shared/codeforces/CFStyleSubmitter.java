@@ -15,12 +15,12 @@ import judge.httpclient.SimpleHttpResponse;
 import judge.httpclient.SimpleNameValueEntityFactory;
 import judge.remote.account.RemoteAccount;
 import judge.remote.shared.codeforces.CodeForcesTokenUtil.CodeForcesToken;
-import judge.remote.submitter.PassiveSubmitter;
+import judge.remote.submitter.ComplexSubmitter;
 import judge.remote.submitter.SubmissionInfo;
 
 
 @Component
-public abstract class CFStyleSubmitter extends PassiveSubmitter {
+public abstract class CFStyleSubmitter extends ComplexSubmitter {
 
     @Override
     protected boolean needLogin() {

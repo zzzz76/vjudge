@@ -6,7 +6,7 @@ import judge.httpclient.SimpleNameValueEntityFactory;
 import judge.remote.RemoteOjInfo;
 import judge.remote.account.RemoteAccount;
 import judge.remote.submitter.SubmissionInfo;
-import judge.remote.submitter.ActiveSubmitter;
+import judge.remote.submitter.SimpleSubmitter;
 import judge.tool.GsonUtil;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -21,7 +21,7 @@ import java.util.Map;
  * Date: 2020-10-13
  */
 @Component
-public class JSKSubmitter extends ActiveSubmitter {
+public class JSKSubmitter extends SimpleSubmitter {
 
     @Override
     public RemoteOjInfo getOjInfo() {

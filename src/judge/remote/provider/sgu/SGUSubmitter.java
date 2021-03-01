@@ -8,14 +8,14 @@ import judge.httpclient.SimpleHttpResponse;
 import judge.httpclient.SimpleNameValueEntityFactory;
 import judge.remote.RemoteOjInfo;
 import judge.remote.account.RemoteAccount;
-import judge.remote.submitter.PassiveSubmitter;
+import judge.remote.submitter.ComplexSubmitter;
 import judge.remote.submitter.SubmissionInfo;
 
 import org.apache.http.HttpEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SGUSubmitter extends PassiveSubmitter {
+public class SGUSubmitter extends ComplexSubmitter {
 
     @Override
     public RemoteOjInfo getOjInfo() {

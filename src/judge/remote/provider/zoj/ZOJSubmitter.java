@@ -7,7 +7,7 @@ import judge.httpclient.DedicatedHttpClient;
 import judge.httpclient.SimpleNameValueEntityFactory;
 import judge.remote.RemoteOjInfo;
 import judge.remote.account.RemoteAccount;
-import judge.remote.submitter.PassiveSubmitter;
+import judge.remote.submitter.ComplexSubmitter;
 import judge.remote.submitter.SubmissionInfo;
 import judge.tool.Tools;
 
@@ -15,7 +15,7 @@ import org.apache.http.HttpEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ZOJSubmitter extends PassiveSubmitter {
+public class ZOJSubmitter extends ComplexSubmitter {
 
     @Override
     public RemoteOjInfo getOjInfo() {
