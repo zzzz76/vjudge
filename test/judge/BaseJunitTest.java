@@ -1,6 +1,5 @@
 package judge;
 
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -19,5 +18,5 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
         TransactionalTestExecutionListener.class,
         TestServletListener.class
 })
-public class BaseJunitTest {
+public abstract class BaseJunitTest {
 }
