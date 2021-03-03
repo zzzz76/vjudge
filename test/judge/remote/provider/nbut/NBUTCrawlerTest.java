@@ -16,6 +16,6 @@ public class NBUTCrawlerTest extends SimpleCrawlerTest {
     @Override
     public void testCrawl() throws Exception {
         crawler.crawl("1000", getHandler());
-        System.err.println(1);
+        terminal();
     }
 }

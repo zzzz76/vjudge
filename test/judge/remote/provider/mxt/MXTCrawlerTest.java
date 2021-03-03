@@ -15,7 +15,6 @@ public class MXTCrawlerTest extends AuthenticatedCrawlerTest{
     @Override
     public void testCrawl() throws Exception {
         crawler.crawl("1008", getHandler());
-        signalWait();
-        System.err.println(1);
+        terminal();
     }
 }

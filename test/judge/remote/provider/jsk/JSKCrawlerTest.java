@@ -1,8 +1,6 @@
 package judge.remote.provider.jsk;
 
 import judge.remote.crawler.SimpleCrawlerTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -12,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author zzzz76
  */
 public class JSKCrawlerTest extends SimpleCrawlerTest{
-    private final static Logger log = LoggerFactory.getLogger(JSKCrawlerTest.class);
 
     @Autowired
     private JSKCrawler crawler;
@@ -20,6 +17,6 @@ public class JSKCrawlerTest extends SimpleCrawlerTest{
     @Override
     public void testCrawl() throws Exception {
         crawler.crawl("34486", getHandler());
-        System.err.println(1);
+        terminal();
     }
 }

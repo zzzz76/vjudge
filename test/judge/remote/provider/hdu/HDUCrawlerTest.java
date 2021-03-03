@@ -15,8 +15,8 @@ public class HDUCrawlerTest extends SimpleCrawlerTest {
 
     @Override
     public void testCrawl() throws Exception {
-        crawler.crawl("1000", getHandler());
-        System.err.println(1);
+        crawler.crawl("1001", getHandler());
+        terminal();
     }
 
 }

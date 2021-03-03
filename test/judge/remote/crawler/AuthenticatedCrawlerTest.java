@@ -38,14 +38,15 @@ public abstract class AuthenticatedCrawlerTest extends BaseJunitTest {
         };
     }
 
-    protected void signalWait() throws Exception {
+    protected void terminal() throws Exception {
         doneSignal.await(5, TimeUnit.MINUTES);
+        System.err.println(">>> terminal");
     }
 
     private void printProblem(RawProblemInfo info) {
         System.err.println(info.title);
-        System.err.println(info.timeLimit);
-        System.err.println(info.memoryLimit);
+        System.err.println(String.valueOf(info.timeLimit));
+        System.err.println(String.valueOf(info.memoryLimit));
         System.err.println(info.source);
         System.err.println(info.url);
         System.err.println(info.description);
@@ -54,6 +55,6 @@ public abstract class AuthenticatedCrawlerTest extends BaseJunitTest {
         System.err.println(info.hint);
         System.err.println(info.sampleInput);
         System.err.println(info.sampleOutput);
-        System.err.println(new Date());
+        System.err.println(String.valueOf(new Date()));
     }
 }

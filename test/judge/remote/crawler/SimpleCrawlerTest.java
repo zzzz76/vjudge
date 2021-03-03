@@ -31,18 +31,22 @@ public abstract class SimpleCrawlerTest extends BaseJunitTest {
         };
     }
 
+    protected void terminal() {
+        System.err.println(">>> terminal");
+    }
+
     private void printProblem(RawProblemInfo info) {
-        log.error(info.title);
-        log.error(String.valueOf(info.timeLimit));
-        log.error(String.valueOf(info.memoryLimit));
-        log.error(info.source);
-        log.error(info.url);
-        log.error(info.description);
-        log.error(info.input);
-        log.error(info.output);
-        log.error(info.hint);
-        log.error(info.sampleInput);
-        log.error(info.sampleOutput);
-        log.error(String.valueOf(new Date()));
+        System.err.println(info.title);
+        System.err.println(String.valueOf(info.timeLimit));
+        System.err.println(String.valueOf(info.memoryLimit));
+        System.err.println(info.source);
+        System.err.println(info.url);
+        System.err.println(info.description);
+        System.err.println(info.input);
+        System.err.println(info.output);
+        System.err.println(info.hint);
+        System.err.println(info.sampleInput);
+        System.err.println(info.sampleOutput);
+        System.err.println(String.valueOf(new Date()));
     }
 }
