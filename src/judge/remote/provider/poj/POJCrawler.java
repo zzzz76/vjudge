@@ -37,7 +37,7 @@ public class POJCrawler extends SimpleCrawler {
         info.sampleInput = Tools.regFind(html, "<p class=\"pst\">Sample Input</p>([\\s\\S]*?)<p class=\"pst\">");
         info.sampleOutput = Tools.regFind(html, "<p class=\"pst\">Sample Output</p>([\\s\\S]*?)<p class=\"pst\">");
         info.hint = Tools.regFind(html, "<p class=\"pst\">Hint</p>([\\s\\S]*?)<p class=\"pst\">");
-        info.source = Tools.regFind(html, "<p class=\"pst\">Source</p>([\\s\\S]*?)</td></tr></tbody></table>");
+        info.source = Tools.regFind(html, "<p class=\"pst\">Source</p>([\\s\\S]*?)</td></tr></tbody></table>").replaceAll("<[\\s\\S]*?>", "");
     }
 
 }

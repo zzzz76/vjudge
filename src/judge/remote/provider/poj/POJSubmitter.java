@@ -41,7 +41,8 @@ public class POJSubmitter extends ComplexSubmitter {
             "language", info.remotelanguage, //
             "problem_id", info.remoteProblemId, //
             "source", new String(Base64.encodeBase64(info.sourceCode.getBytes())),
-            "encoded", "1"
+            "encoded", "1",
+            "submit", "Submit"
         );
         client.post("/submit", entity, HttpStatusValidator.SC_MOVED_TEMPORARILY);
         return null;
