@@ -60,7 +60,7 @@ public class BaseAction extends ActionSupport implements ParameterAware {
     static public List<RemoteOjInfo> OJList = new ArrayList<>();
     static public List<String> OJListLiteral = new ArrayList<>();
     static {
-//        OJList.add(POJInfo.INFO);
+        OJList.add(POJInfo.INFO);
 //        OJList.add(ZOJInfo.INFO);
 //        OJList.add(UVALiveInfo.INFO);
 //        OJList.add(SGUInfo.INFO);

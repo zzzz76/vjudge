@@ -38,6 +38,20 @@ public class HtmlHandleUtil {
                 .replaceAll("(?<!pre)>\\s+(?=\\w)", "> ");
     }
 
+    public static String _transformUrlToAbs(String html, String baseUri) {
+        Document doc = Jsoup.parse(html, baseUri);
+        for (String[] pair : pairs) {
+            Elements links = doc.select(pair[0]);
+            for (Element element : links) {
+                element.attr(pair[1], element.absUrl(pair[1]));
+            }
+        }
+        return doc.toString()
+                .replaceAll(">\\s*<", "><")
+                .replaceAll("(?<=\\w)\\s+<(?!(/pre|br|br/|br /))", " <")
+                .replaceAll("(?<!(pre|br|br/|br /))>\\s+(?=\\w)", "> ");
+    }
+
     public static String transformUrlToAbsBody(String html, String baseUri) {
         Document doc = Jsoup.parseBodyFragment(html, baseUri);
         for (String[] pair : pairs) {

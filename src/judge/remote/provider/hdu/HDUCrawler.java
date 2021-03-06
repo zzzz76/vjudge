@@ -3,6 +3,7 @@ package judge.remote.provider.hdu;
 import judge.remote.RemoteOjInfo;
 import judge.remote.crawler.RawProblemInfo;
 import judge.remote.crawler.SimpleCrawler;
+import judge.tool.HtmlHandleUtil;
 import judge.tool.Tools;
 
 import org.apache.commons.lang3.StringUtils;
@@ -28,20 +29,26 @@ public class HDUCrawler extends SimpleCrawler {
     }
 
     @Override
+    protected boolean autoTransformAbsoluteHref() {
+        return false;
+    }
+
+    @Override
     protected void populateProblemInfo(RawProblemInfo info, String problemId, String html) {
-        info.title = Tools.regFind(html, "color:#1A5CC8\">([\\s\\S]*?)</h1>").trim();
-        info.timeLimit = (Integer.parseInt(Tools.regFind(html, "(\\d*) MS")));
-        info.memoryLimit = (Integer.parseInt(Tools.regFind(html, "/(\\d*) K")));
-        info.description = (Tools.regFind(html, "> Problem Description </div>([\\s\\S]*?)<br /><[^<>]*?panel_title[^<>]*?>"));
-        info.input = (Tools.regFind(html, "> Input </div>([\\s\\S]*?)<br /><[^<>]*?panel_title[^<>]*?>"));
-        info.output = (Tools.regFind(html, "> Output </div>([\\s\\S]*?)<br /><[^<>]*?panel_title[^<>]*?>"));
-        info.sampleInput = (Tools.regFind(html, "> Sample Input </div>([\\s\\S]*?)<br /><[^<>]*?panel_title[^<>]*?>"));
-        info.sampleOutput = (Tools.regFind(html, "> Sample Output </div>([\\s\\S]*?)(<br /><[^<>]*?panel_title[^<>]*?>|<[^<>]*?><[^<>]*?><i>Hint)") + "</div></div>");
-        info.hint = (Tools.regFind(html, "<i>Hint</i></div>([\\s\\S]*?)<br /><[^<>]*?panel_title[^<>]*?>"));
+        String abs = HtmlHandleUtil.transformUrlToAbs(html, info.url);
+        info.title = Tools.regFind(abs, "color:#1A5CC8\">([\\s\\S]*?)</h1>").trim();
+        info.timeLimit = (Integer.parseInt(Tools.regFind(abs, "(\\d*) MS")));
+        info.memoryLimit = (Integer.parseInt(Tools.regFind(abs, "/(\\d*) K")));
+        info.description = (Tools.regFind(abs, "> Problem Description </div>([\\s\\S]*?)<br /><[^<>]*?panel_title[^<>]*?>"));
+        info.input = (Tools.regFind(abs, "> Input </div>([\\s\\S]*?)<br /><[^<>]*?panel_title[^<>]*?>"));
+        info.output = (Tools.regFind(abs, "> Output </div>([\\s\\S]*?)<br /><[^<>]*?panel_title[^<>]*?>"));
+        info.sampleInput = (Tools.regFind(html, ">Sample Input</div>([\\s\\S]*?)<br><[^<>]*?panel_title[^<>]*?>"));
+        info.sampleOutput = (Tools.regFind(html, ">Sample Output</div>([\\s\\S]*?)(<br><[^<>]*?panel_title[^<>]*?>|<[^<>]*?><[^<>]*?><i>Hint)") + "</div></div>");
+        info.hint = (Tools.regFind(abs, "<i>Hint</i></div>([\\s\\S]*?)<br /><[^<>]*?panel_title[^<>]*?>"));
         if (!StringUtils.isEmpty(info.hint)){
             info.hint = "<pre>" + info.hint + "</pre>";
         }
-        info.source = (Tools.regFind(html, "Source </div><div class=\"panel_content\">([\\s\\S]*?)<[^<>]*?panel_[^<>]*?>").replaceAll("<[\\s\\S]*?>", ""));
+        info.source = (Tools.regFind(abs, "Source </div><div class=\"panel_content\">([\\s\\S]*?)<[^<>]*?panel_[^<>]*?>").replaceAll("<[\\s\\S]*?>", ""));
     }
 
 }

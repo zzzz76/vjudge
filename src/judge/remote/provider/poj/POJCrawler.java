@@ -3,6 +3,7 @@ package judge.remote.provider.poj;
 import judge.remote.RemoteOjInfo;
 import judge.remote.crawler.RawProblemInfo;
 import judge.remote.crawler.SimpleCrawler;
+import judge.tool.HtmlHandleUtil;
 import judge.tool.Tools;
 
 import org.apache.commons.lang3.Validate;
@@ -27,7 +28,13 @@ public class POJCrawler extends SimpleCrawler {
     }
 
     @Override
+    protected boolean autoTransformAbsoluteHref() {
+        return false;
+    }
+
+    @Override
     protected void populateProblemInfo(RawProblemInfo info, String problemId, String html) {
+        html = HtmlHandleUtil._transformUrlToAbs(html, info.url);
         info.title = Tools.regFind(html, "<title>\\d{3,} -- ([\\s\\S]*?)</title>").trim();
         info.timeLimit = Integer.parseInt(Tools.regFind(html, "<b>Time Limit:</b> (\\d{3,})MS</td>"));
         info.memoryLimit = Integer.parseInt(Tools.regFind(html, "<b>Memory Limit:</b> (\\d{2,})K</td>"));

@@ -41,14 +41,14 @@ public abstract class SimpleCrawlerTest extends BaseJunitTest {
         System.err.println(info.title);
         System.err.println(String.valueOf(info.timeLimit));
         System.err.println(String.valueOf(info.memoryLimit));
-        System.err.println(info.source);
         System.err.println(info.url);
         System.err.println(info.description);
         System.err.println(info.input);
         System.err.println(info.output);
-        System.err.println(info.hint);
         System.err.println(info.sampleInput);
         System.err.println(info.sampleOutput);
+        System.err.println(info.hint);
+        System.err.println(info.source);
         System.err.println(String.valueOf(new Date()));
     }
 }
