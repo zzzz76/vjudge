@@ -10,6 +10,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * abstract test for submit
+ *
  * @author zzzz76
  */
 public abstract class SubmitterTest extends BaseJunitTest {

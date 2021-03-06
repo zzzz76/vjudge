@@ -48,7 +48,7 @@ public class HDUSubmitter extends ComplexSubmitter {
             "check", "0", //
             "language", info.remotelanguage, //
             "problemid", info.remoteProblemId, //
-            "usercode", info.sourceCode, //
+//            "usercode", info.sourceCode, //
             getCharset() //
         );
         client.post("/submit.php?action=submit", entity, HttpStatusValidator.SC_MOVED_TEMPORARILY);

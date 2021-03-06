@@ -11,6 +11,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * abstract test for which need login to crawl
+ *
  * @author zzzz76
  */
 public abstract class AuthenticatedCrawlerTest extends BaseJunitTest {

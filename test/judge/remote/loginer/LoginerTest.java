@@ -9,6 +9,8 @@ import org.apache.http.protocol.HttpContext;
 import org.junit.Test;
 
 /**
+ * abstract test for login
+ *
  * @author zzzz76
  */
 public abstract class LoginerTest extends BaseJunitTest {

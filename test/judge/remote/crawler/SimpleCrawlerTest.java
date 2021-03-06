@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Date;
 
 /**
+ * abstract test for direct crawl
+ *
  * @author zzzz76
  */
 public abstract class SimpleCrawlerTest extends BaseJunitTest {
