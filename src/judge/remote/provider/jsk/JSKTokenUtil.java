@@ -11,15 +11,13 @@ import org.apache.http.cookie.Cookie;
  * Date: 2020-10-09
  */
 public class JSKTokenUtil {
-    private static String token = null;
 
     public static String getToken(DedicatedHttpClient client) {
-        if (token == null || token.isEmpty()) {
-            CookieStore cookieStore = (CookieStore) client.getContext().getAttribute(HttpClientContext.COOKIE_STORE);
-            for (Cookie cookie : cookieStore.getCookies()) {
-                if (cookie.getName().equals("XSRF-TOKEN")) {
-                    token = cookie.getValue();
-                }
+        String token = null;
+        CookieStore cookieStore = (CookieStore) client.getContext().getAttribute(HttpClientContext.COOKIE_STORE);
+        for (Cookie cookie : cookieStore.getCookies()) {
+            if (cookie.getName().equals("XSRF-TOKEN")) {
+                token = cookie.getValue();
             }
         }
         return token;
