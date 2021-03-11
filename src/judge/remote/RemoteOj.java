@@ -29,5 +29,6 @@ public enum RemoteOj {
     JSK, //
     MXT, //
     TKOJ, //
+    ECN, //
 
 }
