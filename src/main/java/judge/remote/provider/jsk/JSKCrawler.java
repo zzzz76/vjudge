@@ -41,8 +41,8 @@ public class JSKCrawler extends SimpleCrawler {
         info.timeLimit = Integer.parseInt(gsonUtil.getStrMem("time_limit"));
         info.memoryLimit = Integer.parseInt(gsonUtil.getStrMem("mem_limit"));
         info.description = gsonUtil.getStrMem("description");
-        info.sampleInput = gsonUtil.getStrMem("sample_input");
-        info.sampleOutput = gsonUtil.getStrMem("sample_output");
+        info.sampleInput = "<pre>" + gsonUtil.getStrMem("sample_input") + "</pre>";
+        info.sampleOutput = "<pre>" + gsonUtil.getStrMem("sample_output") + "</pre>";
         info.hint = gsonUtil.getStrMem("hint");
         info.source = gsonUtil.getStrMem("source");
     }
