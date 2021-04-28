@@ -1311,20 +1311,19 @@ public class ContestAction extends BaseAction {
                 "  submission.id, " +
                 "  submission.username, " +
                 "  submission.contestNum, " +
-                "  submission.status, " +
+                "  submission.statusCanonical, " +
                 "  submission.dispLanguage, " +
                 "  submission.source " +
                 "from " +
                 "  Submission submission " +
                 "where " +
                 "  submission.contest.id = " + cid + " and " +
-                "  submission.status = 'Accepted' and " +
                 "  submission.subTime <= submission.contest.endTime ");
         for (Object[] submission : submissions) {
             Integer id = (Integer) submission[0];
             String username = (String) submission[1];
             String pnum = (String) submission[2];
-            //            String status = (String) submission[3];
+            String statusCanonical = (String) submission[3];
             String language = (String) submission[4];
             String source = (String) submission[5];
 
@@ -1346,7 +1345,7 @@ public class ContestAction extends BaseAction {
                 extensionName = ".rb";
             }
 
-            File problemDir = new File(realPath + "/" + cid + "/" + pnum);
+            File problemDir = new File(realPath + "/" + cid + "/" + statusCanonical + "/" + pnum);
             if (!problemDir.exists()) {
                 problemDir.mkdirs();
             }
