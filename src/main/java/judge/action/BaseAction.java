@@ -38,6 +38,7 @@ import judge.remote.provider.ztrening.ZTreningInfo;
 import judge.service.IBaseService;
 import judge.service.JudgeService;
 
+import judge.tool.ApplicationContainer;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.struts2.interceptor.ParameterAware;
 
@@ -50,7 +51,9 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public class BaseAction extends ActionSupport implements ParameterAware {
     private static final long serialVersionUID = 1L;
-    
+
+    protected long limitViewSource = Long.parseLong((String) ApplicationContainer.serveletContext.getAttribute("limit.viewsource"));
+
     protected Map<String, String[]> paraMap;
     protected Object json;
 
@@ -137,5 +140,4 @@ public class BaseAction extends ActionSupport implements ParameterAware {
     public void setJson(Object json) {
         this.json = json;
     }
-
 }

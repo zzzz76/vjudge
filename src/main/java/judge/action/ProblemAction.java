@@ -660,6 +660,11 @@ public class ProblemAction extends BaseAction{
             session.put("error", "No access to this code!");
             return ERROR;
         }
+
+        if (submission.getSubTime().getTime() < limitViewSource) {
+            session.put("error", "No access to front code, come back next day");
+            return ERROR;
+        }
         problem = submission.getProblem();
         submission.setSource(Tools.toHTMLChar(submission.getSource()));
         languageList = languageManager.getLanguages(problem.getOriginOJ(),problem.getOriginProb());

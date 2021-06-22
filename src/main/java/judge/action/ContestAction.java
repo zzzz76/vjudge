@@ -1170,6 +1170,9 @@ public class ContestAction extends BaseAction {
                     submission.setSource("Come back when the contest ends, please :)");
                 }
                 language = "sh_sql";
+            } else if (submission.getSubTime().getTime() < limitViewSource){
+                submission.setSource("No access to front code, come back next day");
+                language = "sh_sql";
             } else {
                 submission.setSource(Tools.toHTMLChar(submission.getSource()));
                 //这里language用作为shjs提供语言识别所需要的class名
