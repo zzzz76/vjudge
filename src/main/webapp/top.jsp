@@ -12,10 +12,21 @@
           <li><a href='${contextPath}/contest/statistic.action'>Statistic</a></li>
        </ul>
     </li>
-	<li style="float:right"><s:if test="#session.visitor != null"><a id="logout" href="javascript:void(0)">LOGOUT</a></s:if><s:else><a class="login" href="javascript:void(0)">LOGIN</a></s:else></li>
-	<li style="float:right"><s:if test="#session.visitor != null"><a id="my_account" uid="<s:property value='#session.visitor.id' />" href="${contextPath}/user/toUpdate.action?uid=<s:property value="#session.visitor.id" />"><s:property value="#session.visitor.username" /></a></s:if><s:else>
-        <%--<a class="register" href="javascript:void(0)">REGISTER</a>--%>
-    </s:else></li>
+    <s:if test="#session.visitor != null">
+        <li style="float:right" class="has-sub"><a id="my_account" uid="<s:property value='#session.visitor.id' />" href="${contextPath}/user/toUpdate.action?uid=<s:property value="#session.visitor.id" />"><s:property value="#session.visitor.username" /></a>
+            <ul>
+                <s:if test="#session.visitor.sup == 1">
+                <li><a href='${contextPath}/user/toAddUser.action' class="login">Add User</a></li>
+                <li><a href='${contextPath}/stat/listOL.action'>Online Users</a></li>
+                </s:if>
+                <li><a id="logout" href="javascript:void(0)">LOGOUT</a></li>
+            </ul>
+        </li>
+    </s:if>
+    <s:else>
+        <li style="float:right"><a class="login" href="javascript:void(0)">LOGIN</a></li>
+    </s:else>
+<%--    <s:else><a class="register" href="javascript:void(0)">REGISTER</a></s:else>--%>
 </ul>
 </div>
 

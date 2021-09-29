@@ -51,6 +51,19 @@
             </interceptor-ref>
         </action>
 
+        <!-- 跳转至添加用户页面-->
+        <action name="toAddUser" class="userAction" method="toAddUser">
+            <result name="success">/user/addUser.jsp</result>
+            <result name="error" type="redirect">/toIndex.action</result>
+        </action>
+
+        <!-- 添加用户 -->
+        <action name="addUser" class="userAction" method="addUser">
+            <result name="success" type="redirect">/user/profile.action?uid=${user.id}</result>
+            <result name="input">/user/addUser.jsp</result>
+            <result name="error">/user/addUser.jsp</result>
+        </action>
+
         <!-- 跳转至更改个人信息页面 -->
         <action name="toUpdate" class="userAction" method="toUpdate">
             <result name="success">/user/update.jsp</result>

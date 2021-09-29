@@ -232,6 +232,55 @@ public class UserAction extends BaseAction implements ServletRequestAware {
         return SUCCESS;
     }
 
+    public String toAddUser() {
+        user = OnlineTool.getCurrentUser();
+        if (user == null || user.getSup() == 0) {
+            return ERROR;
+        }
+        return SUCCESS;
+    }
+
+    public String addUser() {
+        User cUser = OnlineTool.getCurrentUser();
+        if (cUser == null || cUser.getSup() == 0) {
+            return ERROR;
+        }
+
+        if (!username.matches("[0-9a-zA-Z_]+")){
+            this.addActionError("Username should only contain digits, letters, or '_'s !");
+        } else if (username.length() < 2 || username.length() > 16){
+            this.addActionError("Username should have at least 2 characters and at most 16 characters!");
+        } else if (nickname.length() > 20){
+            this.addActionError("Nickname should have at most 20 characters!");
+        } else if (password.length() < 4 || password.length() > 30){
+            this.addActionError("Password should have at least 4 characters and at most 30 characters!");
+        } else if (!password.equals(repassword)){
+            this.addActionError("Two passwords are not the same!");
+        } else if (userService.checkUsername(username)){
+            this.addActionError("Username has been registered!");
+        } else if (qq.length() > 15){
+            this.addActionError("QQ is too long!");
+        } else if (school.length() > 95){
+            this.addActionError("School is too long!");
+        } else if (email.length() > 95){
+            this.addActionError("Email is too long!");
+        } else if (blog.length() > 995){
+            this.addActionError("Blog is too long!");
+        }
+        if (!this.getActionErrors().isEmpty()) {
+            return INPUT;
+        }
+        user = new User(username, MD5.getMD5(password));
+        user.setNickname(nickname.trim());
+        user.setQq(qq);
+        user.setSchool(school);
+        user.setEmail(email);
+        user.setBlog(blog);
+        user.setShare(share);
+        baseService.addOrModify(user);
+        return SUCCESS;
+    }
+
     public String toUpdate(){
         user = (User) baseService.query(User.class, uid);
         username = user.getUsername();
@@ -245,7 +294,6 @@ public class UserAction extends BaseAction implements ServletRequestAware {
         redir = ServletActionContext.getRequest().getHeader("Referer");
         return SUCCESS;
     }
-
 
     public String update(){
         user = (User) baseService.query(User.class, uid);

@@ -51,12 +51,16 @@ public class RemoteAccountTaskExecutor {
                 while (true) {
                     RemoteAccountTask<?> task = null;
                     try {
+                        // 守护线程空闲 则取出队首任务
                         task = running.take();
+                        // 获取任务的种类
                         RemoteOj remoteOj = task.getRemoteOj();
 
                         // 假设在处理一个提交任务时，存在多个账户可以选择
+                        // 获取账号仓库
                         RemoteAccountRepository repo = repos.get(remoteOj);
                         if (repo != null) {
+                            // 仓库 调用 任务实例
                             repo.handle(task);
                         } else {
                             throw new RuntimeException("There are no remote accounts configured for remote OJ: " + remoteOj);
@@ -65,6 +69,7 @@ public class RemoteAccountTaskExecutor {
                         log.error(t.getMessage(), t);
                         if (task != null) {
                             try {
+                                // 通过函数回调，进行事务回滚
                                 task.getHandler().onError(t);
                             } catch (Throwable t1) {
                                 log.error(t.getMessage(), t1);

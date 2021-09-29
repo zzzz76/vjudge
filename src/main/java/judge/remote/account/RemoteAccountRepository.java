@@ -71,14 +71,18 @@ public class RemoteAccountRepository {
     
     /////////////////////////////////////////////////////////////
 
+    // 在仓库容器中 执行任务
     public void handle(RemoteAccountTask<?> task) {
         if (task.isDone()) {
+            // 若待执行的任务 为done
             releaseAccount(task.getAccount());
         } else {
+            // 若待执行的任务 为start
             tryExecute(task);
         }
     }
-    
+
+    // 释放任务锁定的 账户
     private void releaseAccount(RemoteAccount account) {
         Validate.isTrue(account.getRemoteOj().equals(remoteOj));
         String accountId = account.getAccountId();
@@ -122,15 +126,20 @@ public class RemoteAccountRepository {
         return false;
     }
 
+    // 在仓库容器中 执行任务调用(正向)
     private void tryExecute(RemoteAccountTask<?> task) {
+        // 获取task中账号id信息
         String accountId = task.getAccountId();
         if (accountId != null && !publicRepo.containsKey(accountId) && !privateRepo.containsKey(accountId)) {
+            // 若已有账号 且不匹配 直接返回 并结束
             task.offerResult(new RuntimeException("Specified accountId(" + accountId + ") not found."));
             return;
         }
-        
+
+        // 若未有账号 或 账号匹配
         RemoteAccount account = findAccount(accountId, task.getExclusiveCode());
         if (account != null) {
+            // 使用账号 执行任务
             execute(task, account);
             return;
         }
@@ -145,7 +154,8 @@ public class RemoteAccountRepository {
         }
         picky.add(task);
     }
-    
+
+    // 获取尚未锁定的 账号 并返回
     private RemoteAccount findAccount(String accountId, String exclusiveCode) {
         List<RemoteAccountStatus> candidates = new ArrayList<>();
         if (accountId == null) {
@@ -192,16 +202,20 @@ public class RemoteAccountRepository {
                     log.error(t.getMessage(), t);
                 } finally {
                     task.done();
+                    //任务执行完毕 再次入队
                     remoteAuthTaskExecutor.submit(task);
                 }
                 
                 Handler<V> handler = task.getHandler();
                 if (handler != null) {
                     if (result != null) {
+                        // 回调处理结果
                         handler.handle(result);
                     } else if (throwable != null) {
+                        // 回调业务回滚
                         handler.onError(throwable);
                     } else {
+                        // 回调业务回滚
                         handler.onError(new RuntimeException("What the fuck ??"));
                     }
                 }
